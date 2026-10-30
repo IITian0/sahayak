@@ -36,6 +36,20 @@ icon-192.png            app icon
 icon-512.png            app icon
 ```
 
+
+## Files in this repo
+
+| File | What it is |
+|---|---|
+| `index.html` | marketing site, install section, downloads |
+| `app.html` | the working app (6 tabs, voice, fall detection, SOS) |
+| `Sahayak-2-Page-Pitch.pdf` | the two-page deck submitted to SPHINX'26 |
+| `Sahayak-60-Second-Script.pdf` | the 60-second pitch, word for word |
+| `Sahayak-60-Second-Script-Hinglish.pdf` | the same script in Hinglish |
+| `Sahayak-Logo.png` / `-Dark.png` / `-Tile.png` | the logo |
+| `manifest.webmanifest`, `sw.js` | PWA |
+| `icon-192.png`, `icon-512.png` | app icons |
+
 ## Run locally
 
 Open `index.html` in any browser. No build step, no dependencies. The service worker needs `http://` or `https://` — for a local test, run `python3 -m http.server` in this folder.
