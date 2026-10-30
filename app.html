@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sahayak — App</title>
+<style>
+:root{
+  --plum:#2E1A3E;--plum2:#3F2652;--plum3:#513068;
+  --coral:#E2603C;--coral2:#B8462A;
+  --lav:#B39AC7;--lav2:#D6C6E2;
+  --cream:#FBF6F1;--ink:#241A2B;--ink2:#6A5C74;--ink3:#9A8CA4;
+  --mint:#E4D8EC;--peach:#F6D9CE;--line:#EBE1F1;--white:#fff;
+  --green:#2F7D5B;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  background:radial-gradient(circle at 72% 18%,#43295A 0%,#2E1A3E 42%,#120A19 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;color:#fff}
+.cap{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#C9B6D8;margin-bottom:14px;font-weight:600}
+.cap b{color:#E2603C}
+.phone{width:392px;max-width:100%;height:792px;background:#0E0816;border-radius:52px;padding:10px;
+  box-shadow:0 50px 110px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.07) inset;position:relative}
+.screen{width:100%;height:100%;background:var(--cream);border-radius:44px;overflow:hidden;
+  display:flex;flex-direction:column;color:var(--ink);position:relative}
+.notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:118px;height:26px;background:#0E0816;border-radius:14px;z-index:20}
+.sbar{flex:none;height:46px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 6px;font-size:12px;font-weight:700;color:var(--ink)}
+.sbar .r{display:flex;gap:5px;align-items:center}
+.sbar i{display:block;background:var(--ink);border-radius:2px}
+.sig{width:15px;height:9px;clip-path:polygon(0 100%,20% 100%,20% 60%,40% 60%,40% 30%,60% 30%,60% 10%,80% 10%,80% 0,100% 0,100% 100%)}
+.wifi{width:13px;height:9px;clip-path:polygon(50% 0,100% 55%,85% 70%,50% 35%,15% 70%,0 55%)}
+.bat{width:20px;height:10px;border-radius:3px}
+.view{flex:1;overflow-y:auto;position:relative}
+.view::-webkit-scrollbar{width:0}
+.pad{padding:0 18px 16px}
+.hd{display:flex;align-items:center;gap:12px;padding:6px 18px 12px}
+.hd h1{font-size:20px;margin:0;letter-spacing:-.01em}
+.hd p{margin:2px 0 0;font-size:11.5px;color:var(--ink2)}
+.mark{width:36px;height:36px;border-radius:11px;background:var(--plum);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex:none}
+.mark span{display:block;width:17px;height:10px;border:3px solid var(--cream);border-top:none;border-radius:0 0 18px 18px;position:relative}
+.mark span::after{content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(45deg);width:8px;height:8px;background:var(--coral);border-radius:50%}
+.avatar{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--peach);color:var(--coral2);display:grid;place-items:center;font-size:12px;font-weight:800}
+.k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--coral);font-weight:800;margin:16px 0 8px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:12px}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:13px;color:#fff;transition:.15s}
+.chk.on{background:var(--lav);border-color:var(--lav)}
+.t{font-size:14px;font-weight:700}
+.s{font-size:11.5px;color:var(--ink2);margin-top:2px}
+.done{text-decoration:line-through;color:var(--ink3)}
+.prog{background:var(--plum);border-radius:18px;padding:16px;color:#fff;display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.ring{width:60px;height:60px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:13px;font-weight:800;background:conic-gradient(var(--coral) var(--p,0%),rgba(255,255,255,.16) 0)}
+.ring i{width:46px;height:46px;border-radius:50%;background:var(--plum);display:grid;place-items:center;font-style:normal}
+.btn{display:block;width:100%;border:none;background:var(--coral);color:#fff;font-size:14px;font-weight:800;padding:14px;border-radius:15px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:#fff;color:var(--plum);border:1px solid var(--line)}
+.btn.plum{background:var(--plum)}
+.msg{display:flex;gap:10px;margin-bottom:12px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--mint);color:var(--plum);font-size:12px;font-weight:800;display:grid;place-items:center;flex:none}
+.bub{background:#fff;border:1px solid var(--line);border-radius:5px 15px 15px 15px;padding:10px 12px;font-size:12.5px;line-height:1.5}
+.bub b{display:block;font-size:11px;color:var(--coral);margin-bottom:2px}
+.bub .meta{font-size:10px;color:var(--ink3);margin-top:6px;display:flex;gap:12px}
+.bub .meta span{cursor:pointer}
+.composer{display:flex;gap:8px;margin-top:4px}
+.composer input{flex:1;border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;font-size:13px;font-family:inherit;color:var(--ink)}
+.composer input:focus{outline:2px solid var(--lav2)}
+.composer button{border:none;background:var(--plum);color:#fff;border-radius:13px;padding:0 16px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
+.helper{display:flex;align-items:center;gap:12px}
+.helper .av{width:42px;height:42px;background:var(--peach);color:var(--coral2);font-size:14px}
+.n{font-size:14px;font-weight:800}
+.m{font-size:11.5px;color:var(--ink2)}
+.book{margin-left:auto;background:var(--plum);color:#fff;border:none;border-radius:11px;padding:9px 15px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.book:disabled{background:var(--lav)}
+.ok{background:var(--mint);border:1px solid var(--lav2);border-radius:14px;padding:12px;font-size:12.5px;color:var(--plum);margin-top:10px}
+.stat{display:flex;gap:10px;margin:8px 0 12px}
+.stat div{flex:1;background:var(--plum3);border-radius:14px;padding:12px;text-align:center;color:#fff}
+.stat b{display:block;font-size:20px}
+.stat small{font-size:10px;color:var(--lav2)}
+nav{flex:none;display:flex;background:#fff;border-top:1px solid var(--line);padding:8px 4px 16px}
+nav button{flex:1;background:none;border:none;font-family:inherit;font-size:9.5px;color:var(--ink3);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 0}
+nav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--coral);font-weight:800}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px}
+.tabs::-webkit-scrollbar{height:0}
+.chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer;font-family:inherit}
+.chip.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.slot{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink)}
+.slot.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.hero-onb{min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 30px}
+.hero-onb .big{width:88px;height:88px;border-radius:26px;background:var(--plum);display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;margin-bottom:22px}
+.hero-onb .big span{display:block;width:42px;height:24px;border:7px solid var(--cream);border-top:none;border-radius:0 0 44px 44px;position:relative}
+.hero-onb .big span::after{content:"";position:absolute;top:-28px;left:50%;transform:translateX(-50%) rotate(45deg);width:18px;height:18px;background:var(--coral);border-radius:50%}
+.hero-onb h2{font-size:26px;margin:0 0 10px;letter-spacing:-.02em}
+.hero-onb p{font-size:13.5px;line-height:1.6;color:var(--ink2);margin:0 0 26px}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:14px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--coral);width:18px;border-radius:4px}
+.switch{display:flex;background:var(--mint);border-radius:12px;padding:3px;gap:3px}
+.switch button{flex:1;border:none;background:none;padding:8px;border-radius:9px;font-size:12px;font-weight:800;color:var(--plum);cursor:pointer;font-family:inherit}
+.switch button.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.listrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.listrow:last-child{border-bottom:none}
+.listrow .ic{width:30px;height:30px;border-radius:9px;background:var(--mint);display:grid;place-items:center;flex:none;font-size:14px}
+.hint{margin-top:14px;font-size:11.5px;color:#B39AC7;text-align:center}
+</style>
+</head>
+<body>
+<div class="cap">Sahayak · <b>working prototype</b></div>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="sbar"><span id="clock">9:41</span><span class="r"><i class="sig"></i><i class="wifi"></i><i class="bat" style="background:var(--ink)"></i></span></div>
+    <div class="view" id="view"></div>
+    <nav id="nav"></nav>
+  </div>
+</div>
+<div class="hint">Onboarding → tick tasks → post in circle → book a helper → send family note</div>
+
+<script>
+/* ---------- state ---------- */
+const S = {
+  onboarded:false, lang:'en', tab:'home',
+  tasks:[
+    {t:{en:"Morning medicine",hi:"Subah ki dawa"}, d:{en:"Donepezil 5 mg · 8:00 am",hi:"Donepezil 5 mg · 8:00 baje"}, done:true},
+    {t:{en:"Breakfast and water",hi:"Nashta aur paani"}, d:{en:"Soft food, 2 glasses · 9:00 am",hi:"Naram khana, 2 glass · 9:00 baje"}, done:true},
+    {t:{en:"Afternoon walk",hi:"Dopahar ki sair"}, d:{en:"With support, 15 min · 4:30 pm",hi:"Sahara ke saath, 15 min · 4:30 baje"}, done:false}
+  ],
+  posts:[
+    {n:"Sunita · Jaipur", m:{en:"Amma refused food today. Is that normal?",hi:"Amma ne aaj khana nahi khaya. Kya ye normal hai?"}, likes:4, ago:"12m"},
+    {n:"Dr. Rao · clinical", m:{en:"It can happen. Offer small meals through the day, and log it in Care plan.",hi:"Ho sakta hai. Din bhar thoda-thoda khilayein, aur Care plan me likhein."}, likes:11, ago:"8m"},
+    {n:"Meera · Ajmer", m:{en:"Same with my father. Warm milk before the meal helped us.",hi:"Mere papa ke saath bhi aisa tha. Khane se pehle garam doodh se fayda hua."}, likes:7, ago:"3m"}
+  ],
+  booking:null, slot:null, sent:false, liked:{}
+};
+
+const L = {
+  en:{today:"Today",plan:"Care plan",circle:"Circle",help:"Respite",family:"Family",
+      hi:"Good morning, Asha",sub:"Amma's care · Jaipur",k1:"Today's care",k2:"Caregiver tip",
+      tip:"Keep the evening calm — dim the lights by 8 pm and play the same soft music. Familiar routines reduce agitation.",
+      book:"Book a helper for a few hours",note:"Family note sent",noteSub:"Rohan (Pune) · 9:12 am",
+      steps:"care steps",done:"done"},
+  hi:{today:"Aaj",plan:"Care plan",circle:"Circle",help:"Madad",family:"Parivaar",
+      hi:"Suprabhat, Asha",sub:"Amma ki dekhbhal · Jaipur",k1:"Aaj ki dekhbhal",k2:"Caregiver tip",
+      tip:"Shaam shaant rakhein — 8 baje tak roshni kam karein aur wahi halka sangeet bajayein. Jaani-pehchani routine se ghabrahat kam hoti hai.",
+      book:"Kuch ghanton ke liye helper book karein",note:"Parivaar ko note bheja",noteSub:"Rohan (Pune) · 9:12 baje",
+      steps:"care steps",done:"ho gaya"}
+};
+const t = k => L[S.lang][k];
+
+/* ---------- helpers ---------- */
+const pct = () => Math.round(S.tasks.filter(x=>x.done).length / S.tasks.length * 100);
+const el = id => document.getElementById(id);
+
+function statusBar(){ return `<div class="sbar"><span>9:41</span><span class="r"><i class="sig"></i><i class="wifi"></i><i class="bat"></i></span></div>`; }
+
+function navHTML(){
+  const tabs=[["home","today","M3 10.5 12 3l9 7.5V21H3z"],["plan","plan","M4 6h16M4 12h16M4 18h10"],
+              ["circle","circle","M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"],
+              ["help","help","M12 21s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.4-7 10-7 10Z"],["family","family","M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8M22 20v-2a4 4 0 0 0-3-3.9"]];
+  return tabs.map(([k,l,d])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">
+    <svg viewBox="0 0 24 24"><path d="${d}"/></svg>${t(l)}</button>`).join("");
+}
+
+/* ---------- screens ---------- */
+function onboarding(){
+  el('nav').style.display='none';
+  el('view').innerHTML = `
+    <div class="hero-onb">
+      <div class="big"><span></span></div>
+      <h2>Care, held together</h2>
+      <p>Sahayak guides the person who looks after an elder at home — daily care, a circle of families, and a verified helper when they need rest.</p>
+      <button class="btn" onclick="start()">Get started</button>
+      <div class="dots"><i class="on"></i><i></i><i></i></div>
+    </div>`;
+}
+
+function home(){
+  return `${head()}
+  <div class="pad">
+    <div class="prog">
+      <div class="ring" style="--p:${pct()}%"><i>${pct()}%</i></div>
+      <div><div style="font-size:15px;font-weight:800">${t('hi')}</div>
+      <div style="font-size:11.5px;color:#D6C6E2;margin-top:3px">${S.tasks.filter(x=>x.done).length} ${S.lang==='en'?'of':'mein se'} ${S.tasks.length} ${t('steps')} ${t('done')}</div></div>
+    </div>
+    <div class="k">${t('k1')}</div>
+    ${S.tasks.map((x,i)=>`<div class="card"><div class="row">
+      <div class="chk ${x.done?'on':''}" onclick="toggle(${i})">${x.done?'✓':''}</div>
+      <div><div class="t ${x.done?'done':''}">${x.t[S.lang]}</div><div class="s">${x.d[S.lang]}</div></div>
+    </div></div>`).join("")}
+    <div class="card"><div class="k" style="margin-top:0">${t('k2')}</div>
+      <div style="font-size:12.5px;line-height:1.55;color:var(--ink2)">${t('tip')}</div></div>
+    <button class="btn" onclick="go('help')">${t('book')}</button>
+    <div class="card" style="margin-top:12px"><div class="row">
+      <div class="chk on">✓</div><div><div class="t done">${t('note')}</div><div class="s">${t('noteSub')}</div></div>
+    </div></div>
+  </div>`;
+}
+
+function plan(){
+  const meds=[["Donepezil","5 mg","8:00 am","After breakfast"],["Memantine","10 mg","2:00 pm","After lunch"],
+              ["Vitamin D","1 tab","9:00 am","Weekly, Monday"],["BP check","—","6:00 pm","Log the reading"]];
+  return `${head()}<div class="pad">
+    <div class="k">${S.lang==='en'?'Medicines today':'Aaj ki dawaiyan'}</div>
+    ${meds.map(m=>`<div class="card"><div class="row">
+      <div class="ic" style="width:34px;height:34px;border-radius:10px;background:var(--mint);display:grid;place-items:center;font-size:15px">💊</div>
+      <div><div class="t">${m[0]} <span style="font-weight:600;color:var(--ink2)">${m[1]}</span></div><div class="s">${m[3]}</div></div>
+      <div style="margin-left:auto;font-size:12px;font-weight:800;color:var(--coral)">${m[2]}</div>
+    </div></div>`).join("")}
+    <div class="card" style="background:var(--peach);border-color:#EFC9B9">
+      <div style="font-size:12px;font-weight:800;color:var(--coral2);margin-bottom:4px">Doctor's note · Dr. Rao</div>
+      <div style="font-size:12.5px;line-height:1.55;color:#7A3B25">Keep the afternoon quiet. If she refuses food twice in a day, message the circle.</div>
+    </div>
+    <button class="btn ghost" onclick="go('circle')">Ask the circle a question</button>
+  </div>`;
+}
+
+function circle(){
+  return `${head()}<div class="pad">
+    <div class="k">${S.lang==='en'?'Caregiver circle · Jaipur':'Caregiver circle · Jaipur'}</div>
+    ${S.posts.map((p,i)=>`<div class="msg"><div class="av">${p.n[0]}</div>
+      <div class="bub"><b>${p.n}</b>${p.m[S.lang]}
+        <div class="meta"><span onclick="like(${i})">♥ ${p.likes+(S.liked[i]?1:0)}</span><span>Reply</span><span>${p.ago}</span></div>
+      </div></div>`).join("")}
+    <div class="composer"><input id="q" placeholder="${S.lang==='en'?'Ask the circle…':'Circle se poochhein…'}" onkeydown="if(event.key==='Enter')send()">
+      <button onclick="send()">Send</button></div>
+  </div>`;
+}
+
+function help(){
+  const hs=[{n:"Meena Sharma",m:"Verified · 4 years · Hindi",r:"4.9"},{n:"Kavita Rao",m:"Dementia care trained",r:"4.8"},
+            {n:"Anita Verma",m:"Verified · 2 years · Marathi",r:"4.7"}];
+  return `${head()}<div class="pad">
+    <div class="k">${S.lang==='en'?'Verified helpers near you':'Aapke paas ke verified helpers'}</div>
+    ${hs.map((h,i)=>`<div class="card"><div class="helper">
+      <div class="av">${h.n[0]}</div><div><div class="n">${h.n}</div><div class="m">${h.m} · ★ ${h.r}</div></div>
+      <button class="book" ${S.booking!==null?'disabled':''} onclick="pick(${i})">${S.booking===i?'Booked':'Book'}</button>
+    </div></div>`).join("")}
+    <div class="k">${S.lang==='en'?'Pick a time':'Samay chunein'}</div>
+    <div class="row" style="gap:8px">${["9–12","12–3","3–6","6–9"].map((s,i)=>
+      `<button class="slot ${S.slot===i?'on':''}" onclick="slot(${i})">${s}</button>`).join("")}</div>
+    ${S.booking!==null?`<div class="ok">✓ ${hs[S.booking].n} booked for today, ${["9–12","12–3","3–6","6–9"][S.slot??2]}. You can rest — the family will be told.</div>`:''}
+    <button class="btn ghost" style="margin-top:12px" onclick="go('family')">See the family update</button>
+  </div>`;
+}
+
+function family(){
+  const d=S.tasks.filter(x=>x.done).length;
+  return `${head()}<div class="pad">
+    <div class="k">${S.lang==='en'?'Family update':'Parivaar ko update'}</div>
+    <div class="stat">
+      <div><b>${d}/${S.tasks.length}</b><small>${S.lang==='en'?'care steps':'care steps'}</small></div>
+      <div><b>${S.booking!==null?1:0}</b><small>${S.lang==='en'?'helper visit':'helper visit'}</small></div>
+      <div><b>3</b><small>${S.lang==='en'?'days steady':'din shaant'}</small></div>
+    </div>
+    <div class="card"><div style="font-size:13px;font-weight:800;margin-bottom:6px">${S.lang==='en'?'Today at home':'Aaj ghar par'}</div>
+      <div style="font-size:12.5px;line-height:1.6;color:var(--ink2)">Amma took her medicine on time and ate breakfast.
+      ${S.booking!==null?'A helper visited in the afternoon.':'She is resting now.'} Mood was calm. No falls.</div></div>
+    <button class="btn" onclick="sendUpdate()">${S.sent?(S.lang==='en'?'✓ Sent to Rohan':'✓ Rohan ko bhej diya'):(S.lang==='en'?'Send this note to Rohan':'Ye note Rohan ko bhejein')}</button>
+    ${S.sent?`<div class="ok">✓ Sent. Rohan (Pune) can see today's note in his app.</div>`:''}
+    <div class="k">${S.lang==='en'?'Family members':'Parivaar ke sadasya'}</div>
+    <div class="card">
+      <div class="listrow"><div class="ic">R</div><div><div class="t">Rohan</div><div class="s">Son · Pune</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div>
+      <div class="listrow"><div class="ic">P</div><div><div class="t">Priya</div><div class="s">Daughter · Delhi</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div>
+    </div>
+  </div>`;
+}
+
+function profile(){
+  return `<div class="hd"><button class="chip" onclick="go('home')">‹ Back</button></div>
+  <div class="pad">
+    <div class="card" style="text-align:center;padding:22px">
+      <div class="avatar" style="margin:0 auto 10px;width:64px;height:64px;font-size:22px">A</div>
+      <div style="font-size:17px;font-weight:800">Asha Sharma</div>
+      <div class="s">Primary caregiver · Jaipur</div>
+    </div>
+    <div class="k">Language</div>
+    <div class="switch"><button class="${S.lang==='en'?'on':''}" onclick="setLang('en')">English</button>
+      <button class="${S.lang==='hi'?'on':''}" onclick="setLang('hi')">हिंदी</button></div>
+    <div class="k">Elder profile</div>
+    <div class="card">
+      <div class="listrow"><div class="ic">S</div><div><div class="t">Savitri Devi, 78</div><div class="s">Dementia · stage 2</div></div></div>
+      <div class="listrow"><div class="ic">D</div><div><div class="t">Dr. Rao</div><div class="s">Clinical reviewer</div></div></div>
+      <div class="listrow"><div class="ic">₹</div><div><div class="t">Sahayak Plus</div><div class="s">₹299 / month · renews 4 Nov</div></div></div>
+    </div>
+    <button class="btn ghost" onclick="go('home')">Done</button>
+  </div>`;
+}
+
+function head(){
+  return `<div class="hd"><div class="mark"><span></span></div>
+    <div><h1>Sahayak</h1><p>${t('sub')}</p></div>
+    <div class="avatar" onclick="go('profile')">A</div></div>`;
+}
+
+/* ---------- actions ---------- */
+function render(){
+  const v=el('view');
+  if(!S.onboarded){ onboarding(); return; }
+  el('nav').style.display='flex';
+  const map={home,plan,circle,help,family,profile};
+  v.innerHTML=(map[S.tab]||home)();
+  el('nav').innerHTML=navHTML();
+  v.scrollTop=0;
+}
+function start(){ S.onboarded=true; S.tab='home'; render(); }
+function go(k){ S.tab=k; render(); }
+function toggle(i){ S.tasks[i].done=!S.tasks[i].done; render(); }
+function setLang(l){ S.lang=l; render(); }
+function like(i){ S.liked[i]=true; render(); }
+function send(){
+  const inp=el('q'); const txt=(inp.value||'').trim(); if(!txt) return;
+  S.posts.push({n:"You · Asha", m:{en:txt,hi:txt}, likes:0, ago:"now"});
+  render();
+  setTimeout(()=>{ S.posts.push({n:"Sunita · Jaipur", m:{en:"Same here — a warm drink before the meal helped us.",hi:"Yahan bhi — khane se pehle garam doodh se fayda hua."}, likes:2, ago:"now"});
+    if(S.tab==='circle') render(); }, 800);
+}
+function pick(i){ S.booking=i; if(S.slot===null) S.slot=2; render(); }
+function slot(i){ S.slot=i; render(); }
+function sendUpdate(){ S.sent=true; render(); }
+
+/* clock */
+setInterval(()=>{ const d=new Date(); el('clock').textContent = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0'); },1000);
+if(location.hash==='#home'){S.onboarded=true;S.tab='home';}
+if(location.hash==='#plan'){S.onboarded=true;S.tab='plan';}
+if(location.hash==='#circle'){S.onboarded=true;S.tab='circle';}
+if(location.hash==='#help'){S.onboarded=true;S.tab='help';}
+render();
+</script>
+</body>
+</html>
