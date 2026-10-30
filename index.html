@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sahayak — care for the caregiver</title>
+<style>
+:root{
+  --plum:#2E1A3E;--plum2:#3F2652;--plum3:#513068;--plum4:#6B4A80;
+  --coral:#E2603C;--coral2:#B8462A;--lav:#B39AC7;--lav2:#D6C6E2;
+  --cream:#FBF6F1;--ink:#241A2B;--ink2:#6A5C74;--ink3:#9A8CA4;
+  --mint:#E4D8EC;--peach:#F6D9CE;--line:#EBE1F1;--green:#2F7D5B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+a{color:inherit;text-decoration:none}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(251,246,241,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:34px;height:68px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.01em}
+.mark{width:34px;height:34px;border-radius:10px;background:var(--plum);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex:none}
+.mark span{display:block;width:16px;height:9px;border:3px solid var(--cream);border-top:none;border-radius:0 0 16px 16px;position:relative}
+.mark span::after{content:"";position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:7px;height:7px;background:var(--coral);border-radius:50%}
+.nav nav{display:flex;gap:26px;font-size:14px;font-weight:600;color:var(--ink2);margin-left:auto}
+.nav nav a:hover{color:var(--plum)}
+.nav .cta{background:var(--plum);color:#fff;padding:10px 20px;border-radius:12px;font-size:13.5px;font-weight:800}
+.nav .cta:hover{background:var(--plum2)}
+
+/* hero */
+.hero{background:radial-gradient(circle at 78% 18%,#472B60 0%,#2E1A3E 46%,#150B1E 100%);color:#fff;padding:76px 0 92px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-160px;top:-160px;width:520px;height:520px;border-radius:50%;background:rgba(226,96,60,.10)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:2}
+.tag{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--coral)}
+.tag i{width:8px;height:8px;border-radius:50%;background:var(--coral);display:block}
+.hero h1{font-size:56px;line-height:1.04;letter-spacing:-.025em;margin:20px 0 20px;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--coral)}
+.hero p{font-size:17.5px;line-height:1.65;color:#D9CCE4;max-width:520px}
+.btns{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap}
+.b1{background:var(--coral);color:#fff;padding:15px 28px;border-radius:14px;font-weight:800;font-size:15px;transition:.15s}
+.b1:hover{background:var(--coral2)}
+.b2{background:transparent;color:#fff;padding:15px 28px;border-radius:14px;font-weight:800;font-size:15px;border:1.5px solid rgba(255,255,255,.28)}
+.b2:hover{border-color:#fff}
+.trust{display:flex;gap:26px;margin-top:34px;font-size:12.5px;color:#B39AC7}
+.trust b{color:#fff;display:block;font-size:15px}
+
+/* phone mock */
+.phone{width:290px;height:590px;background:#0E0816;border-radius:42px;padding:9px;margin-left:auto;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08) inset;position:relative}
+.phone .scr{width:100%;height:100%;background:var(--cream);border-radius:34px;overflow:hidden;color:var(--ink);display:flex;flex-direction:column;position:relative}
+.phone .nt{position:absolute;top:15px;left:50%;transform:translateX(-50%);width:92px;height:20px;background:#0E0816;border-radius:11px;z-index:3}
+.pb{padding:34px 16px 0}
+.pb h4{font-size:15px;font-weight:800}
+.pb p{font-size:10.5px;color:var(--ink2)}
+.pprog{background:var(--plum);border-radius:15px;padding:13px;color:#fff;display:flex;align-items:center;gap:12px;margin:14px 0}
+.pr{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:11px;font-weight:800;background:conic-gradient(var(--coral) 67%,rgba(255,255,255,.16) 0)}
+.pr i{width:35px;height:35px;border-radius:50%;background:var(--plum);display:grid;place-items:center;font-style:normal}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:7px;display:flex;gap:9px;align-items:center;font-size:11px}
+.pchk{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:10px;color:#fff}
+.pchk.on{background:var(--lav);border-color:var(--lav)}
+.pbtn{background:var(--coral);color:#fff;border-radius:11px;padding:11px;text-align:center;font-size:11.5px;font-weight:800;margin-top:6px}
+
+/* strip */
+.strip{background:var(--plum);color:#fff;padding:30px 0}
+.strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.strip b{display:block;font-size:30px;letter-spacing:-.02em}
+.strip small{font-size:12px;color:var(--lav2)}
+
+/* sections */
+section{padding:86px 0}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:var(--coral);margin-bottom:12px}
+h2{font-size:38px;line-height:1.15;letter-spacing:-.02em;margin-bottom:14px}
+.lead{font-size:16.5px;color:var(--ink2);max-width:640px}
+.center{text-align:center}
+.center .lead{margin:0 auto}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px}
+.card h3{font-size:17.5px;margin-bottom:8px;letter-spacing:-.01em}
+.card p{font-size:14px;color:var(--ink2);line-height:1.6}
+.num{width:34px;height:34px;border-radius:11px;background:var(--mint);color:var(--plum);display:grid;place-items:center;font-weight:800;font-size:14px;margin-bottom:14px}
+.card .ic{width:42px;height:42px;border-radius:13px;background:var(--peach);color:var(--coral2);display:grid;place-items:center;font-size:19px;margin-bottom:16px;font-weight:800}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:44px}
+.step{position:relative;padding-top:26px}
+.step::before{content:"";position:absolute;top:8px;left:0;right:-18px;height:2px;background:var(--line)}
+.step:last-child::before{right:0}
+.step .dot{position:absolute;top:0;left:0;width:18px;height:18px;border-radius:50%;background:var(--coral)}
+.step h4{font-size:15.5px;margin-bottom:6px}
+.step p{font-size:13px;color:var(--ink2)}
+
+/* pricing */
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px;position:relative}
+.plan.hot{background:var(--plum);color:#fff;border-color:var(--plum);transform:translateY(-6px);box-shadow:0 24px 50px rgba(46,26,62,.25)}
+.plan .badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--coral);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:999px}
+.plan h4{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.plan.hot h4{color:var(--lav2)}
+.plan .amt{font-size:40px;font-weight:800;letter-spacing:-.03em}
+.plan .amt small{font-size:14px;font-weight:600;color:var(--ink3)}
+.plan.hot .amt small{color:var(--lav2)}
+.plan ul{list-style:none;margin:20px 0 24px;font-size:14px;color:var(--ink2)}
+.plan.hot ul{color:#D9CCE4}
+.plan li{padding:7px 0;border-bottom:1px solid var(--line)}
+.plan.hot li{border-color:rgba(255,255,255,.12)}
+.plan li::before{content:"✓";color:var(--coral);font-weight:800;margin-right:9px}
+.plan a{display:block;text-align:center;padding:13px;border-radius:13px;font-weight:800;font-size:14px;background:var(--cream);color:var(--plum);border:1px solid var(--line)}
+.plan.hot a{background:var(--coral);color:#fff;border-color:var(--coral)}
+
+/* quote */
+.quote{background:var(--plum2);color:#fff;border-radius:24px;padding:46px;margin-top:44px}
+.quote p{font-size:23px;line-height:1.5;letter-spacing:-.01em;max-width:840px}
+.quote .who{margin-top:20px;font-size:13.5px;color:var(--lav2)}
+
+/* cta */
+.cta{background:var(--coral);color:#fff;padding:64px 0;text-align:center}
+.cta h2{color:#fff}
+.cta p{color:#FBE0D6;font-size:16.5px;margin-bottom:28px}
+.cta a{display:inline-block;background:#fff;color:var(--coral2);padding:16px 34px;border-radius:15px;font-weight:800}
+
+/* footer */
+footer{background:var(--plum);color:var(--lav2);padding:56px 0 30px;font-size:13.5px}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
+footer h5{color:#fff;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+footer a{display:block;padding:5px 0;color:var(--lav2)}
+footer a:hover{color:#fff}
+footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-top:22px;display:flex;justify-content:space-between;font-size:12px;color:#8E74A0}
+
+@media(max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;gap:40px}
+  .phone{margin:0 auto}
+  .hero h1{font-size:40px}
+  .grid3,.steps,.price,.grid2,footer .cols{grid-template-columns:1fr}
+  .strip .wrap{grid-template-columns:1fr 1fr}
+  .nav nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="nav"><div class="wrap">
+  <div class="brand"><div class="mark"><span></span></div>Sahayak</div>
+  <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#hospitals">For hospitals</a></nav>
+  <a class="cta" href="app.html">Open the app</a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <div class="tag"><i></i>Team Aasra · MNIT Jaipur</div>
+    <h1>Care for the person<br>who gives the care.</h1>
+    <p>Sahayak is a caregiving network for India's elderly. A daily voice guide in the caregiver's own language, a circle of families who understand, and a verified helper for the hours she needs to rest.</p>
+    <div class="btns"><a class="b1" href="app.html">Try the working app</a><a class="b2" href="#how">See how it works</a></div>
+    <div class="trust">
+      <div><b>10.4 crore</b>Indians over 60</div>
+      <div><b>1 in 10</b>get any care</div>
+      <div><b>₹199</b>a month</div>
+    </div>
+  </div>
+  <div class="phone">
+    <div class="nt"></div>
+    <div class="scr"><div class="pb">
+      <h4>Sahayak</h4><p>Amma's care · Jaipur</p>
+      <div class="pprog"><div class="pr"><i>67%</i></div>
+        <div><div style="font-size:12.5px;font-weight:800">Good morning, Asha</div>
+        <div style="font-size:10px;color:#D6C6E2;margin-top:2px">2 of 3 care steps done</div></div></div>
+      <div class="pcard"><div class="pchk on">✓</div><div><b>Morning medicine</b><br><span style="color:var(--ink2);font-size:9.5px">Donepezil 5 mg · 8:00 am</span></div></div>
+      <div class="pcard"><div class="pchk on">✓</div><div><b>Breakfast and water</b><br><span style="color:var(--ink2);font-size:9.5px">Soft food, 2 glasses · 9:00 am</span></div></div>
+      <div class="pcard"><div class="pchk"></div><div><b>Afternoon walk</b><br><span style="color:var(--ink2);font-size:9.5px">With support, 15 min · 4:30 pm</span></div></div>
+      <div class="pbtn">Book a helper for a few hours</div>
+      <div class="pcard" style="margin-top:9px;display:block"><b style="font-size:10px;color:var(--coral)">CAREGIVER TIP</b><br><span style="color:var(--ink2);font-size:9.5px;line-height:1.5">Keep the evening calm — dim the lights by 8 pm.</span></div>
+    </div></div>
+  </div>
+</div></header>
+
+<div class="strip"><div class="wrap">
+  <div><b>10.4 cr</b><small>Indians aged 60 and above</small></div>
+  <div><b>88 lakh</b><small>Living with dementia</small></div>
+  <div><b>1 in 10</b><small>Get any diagnosis or care</small></div>
+  <div><b>₹199</b><small>A month, against ₹15,000+</small></div>
+</div></div>
+
+<section id="how"><div class="wrap center">
+  <div class="eyebrow">How it works</div>
+  <h2>Four steps, every single day</h2>
+  <p class="lead">The caregiver stops firefighting. She knows what to do, has someone to ask, and can finally rest — while the family stays in the loop.</p>
+  <div class="steps">
+    <div class="step"><span class="dot"></span><h4>Onboard</h4><p>One short call sets up the elder's profile, medicines and routine.</p></div>
+    <div class="step"><span class="dot"></span><h4>Guide</h4><p>Every morning, a voice checklist in the caregiver's own language.</p></div>
+    <div class="step"><span class="dot"></span><h4>Respite</h4><p>A verified helper is matched and booked for a few hours.</p></div>
+    <div class="step"><span class="dot"></span><h4>Update</h4><p>The family living away gets a short end-of-day note.</p></div>
+  </div>
+</div></section>
+
+<section id="features" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap center">
+  <div class="eyebrow">What you get</div>
+  <h2>Built for the caregiver, not the patient</h2>
+  <p class="lead">Most tools centre the person being cared for. Sahayak centres the person doing the caring — because that is where the load actually falls.</p>
+  <div class="grid3">
+    <div class="card"><div class="ic">◍</div><h3>Daily care guide</h3><p>A voice checklist in Hindi or Marathi: medicines, meals, what to watch for. No English forms.</p></div>
+    <div class="card"><div class="ic">◌</div><h3>Caregiver circle</h3><p>Ask other families who are living the same day. Real answers, not search results.</p></div>
+    <div class="card"><div class="ic">✚</div><h3>Verified respite</h3><p>Book a trained, background-checked helper for a few hours. Every visit is tracked.</p></div>
+    <div class="card"><div class="ic">⌂</div><h3>Family updates</h3><p>Sons and daughters away from home get a short daily note — and stop worrying.</p></div>
+    <div class="card"><div class="ic">✎</div><h3>Clinical review</h3><p>A doctor and a nurse review every care step before it ships.</p></div>
+    <div class="card"><div class="ic">₹</div><h3>Affordable</h3><p>₹199–499 a month, against ₹15,000–75,000 for urban home care today.</p></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="wrap center">
+  <div class="eyebrow">Pricing</div>
+  <h2>Simple, monthly, cancellable</h2>
+  <p class="lead">One paying family covers the app. Hospitals and employers are how we scale.</p>
+  <div class="price">
+    <div class="plan"><h4>Basic</h4><div class="amt">₹199<small>/mo</small></div>
+      <ul><li>Daily voice guide</li><li>Caregiver circle</li><li>Family updates</li></ul><a href="app.html">Start free trial</a></div>
+    <div class="plan hot"><div class="badge">Most chosen</div><h4>Sahayak Plus</h4><div class="amt">₹299<small>/mo</small></div>
+      <ul><li>Everything in Basic</li><li>2 respite hours a month</li><li>Priority helper matching</li></ul><a href="app.html">Start free trial</a></div>
+    <div class="plan"><h4>Family</h4><div class="amt">₹499<small>/mo</small></div>
+      <ul><li>Everything in Plus</li><li>Up to 5 family members</li><li>Weekly clinician call</li></ul><a href="app.html">Start free trial</a></div>
+  </div>
+  <div class="quote">
+    <p>“I did not know what to do when Amma refused food. I had nobody to ask. Now I open Sahayak, and someone always answers.”</p>
+    <div class="who">— Asha Sharma, primary caregiver, Jaipur</div>
+  </div>
+</div></section>
+
+<section id="hospitals" style="background:#fff;border-top:1px solid var(--line)"><div class="wrap center">
+  <div class="eyebrow">For hospitals & employers</div>
+  <h2>Care that continues after discharge</h2>
+  <p class="lead">Most families fall apart in the week after a patient comes home. We sell a care-at-home pack alongside discharge, and a plan employers can give staff who look after parents.</p>
+  <div class="grid2" style="text-align:left">
+    <div class="card"><div class="ic">✚</div><h3>Hospital discharge pack</h3><p>A structured 30-day care plan, a trained helper and daily updates — sold with the discharge, billed per patient.</p></div>
+    <div class="card"><div class="ic">◫</div><h3>Corporate elder benefit</h3><p>Employers pay per employee, per year. Staff caring for parents take fewer unplanned days off.</p></div>
+  </div>
+</div></section>
+
+<div class="cta"><div class="wrap">
+  <h2>Put a helper beside every caregiver</h2>
+  <p>Try the working prototype — no sign-up, it runs in your browser.</p>
+  <a href="app.html">Open the Sahayak app</a>
+</div></div>
+
+<footer><div class="wrap">
+  <div class="cols">
+    <div>
+      <div class="brand" style="color:#fff;margin-bottom:14px"><div class="mark"><span></span></div>Sahayak</div>
+      <p style="max-width:300px">A caregiving network for India's elderly — built by Team Aasra, MNIT Jaipur, for SPHINX'26.</p>
+    </div>
+    <div><h5>Product</h5><a href="app.html">The app</a><a href="#how">How it works</a><a href="#pricing">Pricing</a></div>
+    <div><h5>For business</h5><a href="#hospitals">Hospitals</a><a href="#hospitals">Employers</a></div>
+    <div><h5>Contact</h5><a href="mailto:team@sahayak.app">team@sahayak.app</a><a href="#">Jaipur, Rajasthan</a></div>
+  </div>
+  <div class="bot"><span>© 2026 Sahayak · Team Aasra</span><span>Sources: Government of India 2024 · The Lancet 2024 · Business Standard 2024</span></div>
+</div></footer>
+
+</body>
+</html>
