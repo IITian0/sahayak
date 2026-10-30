@@ -176,7 +176,7 @@ var DEFAULT = {
     {n:"Dr. Rao · clinical", m:{en:"It can happen. Offer small meals through the day, and log it in Care plan.",hi:"Ho sakta hai. Din bhar thoda-thoda khilayein, aur Care plan me likhein."}, likes:11, ago:"8m"},
     {n:"Meera · Ajmer", m:{en:"Same with my father. Warm milk before the meal helped us.",hi:"Mere papa ke saath bhi aisa tha. Khane se pehle garam doodh se fayda hua."}, likes:7, ago:"3m"}
   ],
-  bookings: [], sentAt: null, liked: {}, slot: 2, day: 0
+  bookings: [], sentAt: null, liked: {}, slot: 2, day: 0, fall: null, sos: null
 };
 
 var S = null;
@@ -190,12 +190,12 @@ function load() {
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
 var L = {
-  en:{today:"Today",plan:"Care plan",circle:"Circle",help:"Respite",family:"Family",
+  en:{today:"Today",plan:"Care plan",circle:"Circle",help:"Respite",family:"Family",safety:"Safety",
       hi:"Good morning", sub:"care · Jaipur", k1:"Today's care", k2:"Caregiver tip",
       tip:"Keep the evening calm — dim the lights by 8 pm and play the same soft music. Familiar routines reduce agitation.",
       book:"Book a helper for a few hours", note:"Family note sent", noteSub:"sent",
       steps:"care steps", add:"Add a care step"},
-  hi:{today:"Aaj",plan:"Care plan",circle:"Circle",help:"Madad",family:"Parivaar",
+  hi:{today:"Aaj",plan:"Care plan",circle:"Circle",help:"Madad",family:"Parivaar",safety:"Suraksha",
       hi:"Suprabhat", sub:"ki dekhbhal · Jaipur", k1:"Aaj ki dekhbhal", k2:"Caregiver tip",
       tip:"Shaam shaant rakhein — 8 baje tak roshni kam karein aur wahi halka sangeet bajayein.",
       book:"Kuch ghanton ke liye helper book karein", note:"Parivaar ko note bheja", noteSub:"bheja",
@@ -220,7 +220,7 @@ function navHTML(){
   var tabs=[["home","today","M3 10.5 12 3l9 7.5V21H3z"],["plan","plan","M4 6h16M4 12h16M4 18h10"],
             ["circle","circle","M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"],
             ["help","help","M12 21s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.4-7 10-7 10Z"],
-            ["family","family","M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8M22 20v-2a4 4 0 0 0-3-3.9"]];
+            ["family","family","M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8M22 20v-2a4 4 0 0 0-3-3.9"],["safety","safety","M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"]];
   return tabs.map(function(x){ var k=x[0],l=x[1],d=x[2];
     return '<button class="'+(S.tab===k?'on':'')+'" onclick="go(\''+k+'\')"><svg viewBox="0 0 24 24"><path d="'+d+'"/></svg>'+t(l)+'</button>';
   }).join('');
@@ -327,6 +327,34 @@ function family(){
     + '</div>';
 }
 
+function safety(){
+  var f = S.fall, so = S.sos;
+  return head()+'<div class="pad">'
+    + '<div class="k">'+(S.lang==='en'?'Elder safety':'Buzurg ki suraksha')+'</div>'
+    + (f ? '<div class="card" style="background:#B23A48;border-color:#8E2C38;color:#fff">'
+        + '<div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#FFD9D3">Alert</div>'
+        + '<div style="font-size:16px;font-weight:800;margin-top:4px">Possible fall detected</div>'
+        + '<div style="font-size:11.5px;color:#FFE3DE;margin-top:3px">'+f.at+' · '+f.why+'</div>'
+        + '<div class="row" style="gap:8px;margin-top:12px">'
+        + '<button class="btn" style="flex:1;background:#fff;color:#B23A48" onclick="imOkay()">I am okay</button>'
+        + '<a class="btn ghost" style="flex:1;text-align:center;background:transparent;color:#fff;border-color:rgba(255,255,255,.5)" href="tel:+910000000000">Call Rohan</a>'
+        + '</div></div>'
+      : '<div class="card"><div class="row"><div style="flex:1"><div class="t">Fall detection</div><div class="s">'+(fallArmed?'Watching the accelerometer':'Off — tap to start')+'</div></div>'
+        + '<button class="book" onclick="startFall()">'+(fallArmed?'Stop':'Start')+'</button></div>'
+        + '<div style="font-size:11.5px;color:var(--ink2);margin-top:10px;line-height:1.5">Uses the phone\'s motion sensor. A hard impact triggers an alert to the family.</div>'
+        + '<button class="btn ghost" style="margin-top:10px;padding:10px;font-size:12.5px" onclick="simulateFall()">Simulate a fall (for demo)</button></div>')
+    + '<div class="k">SOS · live location</div>'
+    + '<div class="card"><div style="font-size:12.5px;color:var(--ink2);line-height:1.55">One tap sends the current location to Rohan and Priya.</div>'
+    + '<button class="btn" style="margin-top:10px" onclick="sos()">Send my location</button>'
+    + (so ? '<div class="ok">Location shared at '+so.at+'<br><b>'+so.lat+', '+so.lon+'</b><br><a href="https://www.google.com/maps?q='+so.lat+','+so.lon+'" target="_blank" style="color:var(--coral2);font-weight:800">Open in Maps →</a></div>' : '')
+    + '</div>'
+    + '<div class="k">'+(S.lang==='en'?'What runs on the device':'Device par kya chalta hai')+'</div>'
+    + '<div class="card"><div class="listrow"><div class="ic">◉</div><div><div class="t">Accelerometer</div><div class="s">Fall detection, no server</div></div></div>'
+    + '<div class="listrow"><div class="ic">⌖</div><div><div class="t">Geolocation</div><div class="s">SOS location, shared by you</div></div></div>'
+    + '<div class="listrow"><div class="ic">▣</div><div><div class="t">On-device</div><div class="s">Nothing leaves the phone</div></div></div></div>'
+    + '</div>';
+}
+
 function profile(){
   return '<div class="hd"><button class="chip" onclick="go(\'home\')">‹ Back</button></div><div class="pad">'
     + '<div class="card" style="text-align:center;padding:22px"><div class="avatar" style="margin:0 auto 10px;width:64px;height:64px;font-size:22px">'+esc((S.name||'A').charAt(0).toUpperCase())+'</div>'
@@ -349,7 +377,7 @@ function render(){
   var v=el('view');
   if(!S.name){ onboarding(); return; }
   el('nav').style.display='flex';
-  var map={home:home,plan:plan,circle:circle,help:help,family:family,profile:profile};
+  var map={home:home,plan:plan,circle:circle,help:help,family:family,safety:safety,profile:profile};
   v.innerHTML=(map[S.tab]||home)();
   el('nav').innerHTML=navHTML();
 }
@@ -451,6 +479,35 @@ function chartSVG(){
        + '<div style="font-size:11px;color:var(--ink2);margin-top:6px">Care steps completed · last 7 days</div></div>';
 }
 
+var fallArmed = false;
+function nowTime(){ var d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+function onMotion(e){
+  var a = e.accelerationIncludingGravity; if(!a) return;
+  var mag = Math.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+  if(mag > 28 && !S.fall){ triggerFall('Accelerometer spike ('+Math.round(mag)+')'); }
+}
+function startFall(){
+  if(fallArmed){ fallArmed=false; window.removeEventListener('devicemotion', onMotion); toast('Fall detection off'); render(); return; }
+  if(typeof DeviceMotionEvent === 'undefined'){ toast('No motion sensor — use Simulate'); return; }
+  var arm = function(){ fallArmed=true; window.addEventListener('devicemotion', onMotion); toast('Fall detection on'); render(); };
+  if(typeof DeviceMotionEvent.requestPermission === 'function'){
+    DeviceMotionEvent.requestPermission().then(function(p){ if(p==='granted') arm(); else toast('Motion permission denied'); }).catch(function(){ toast('Motion permission denied'); });
+  } else { arm(); }
+}
+function triggerFall(why){
+  S.fall = {at: nowTime(), why: why}; save(); render(); toast('Possible fall detected');
+}
+function simulateFall(){ triggerFall('Simulated impact'); }
+function imOkay(){ S.fall = null; save(); render(); toast('Marked safe'); }
+function sos(){
+  if(!navigator.geolocation){ toast('Location is not supported here'); return; }
+  toast('Getting your location…');
+  navigator.geolocation.getCurrentPosition(function(p){
+    S.sos = {lat: p.coords.latitude.toFixed(5), lon: p.coords.longitude.toFixed(5), at: nowTime()};
+    save(); render(); toast('Location sent to Rohan');
+  }, function(){ toast('Location blocked — allow it and retry'); }, {enableHighAccuracy:true, timeout:8000});
+}
+
 setInterval(function(){ var d=new Date(); el('clock').textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); },1000);
 
 load();
@@ -461,6 +518,7 @@ if(location.hash==='#circle'){ S.tab='circle'; }
 if(location.hash==='#family'){ S.tab='family'; }
 if(location.hash==='#plan'){ S.tab='plan'; }
 if(location.hash==='#profile'){ S.tab='profile'; }
+if(location.hash==='#safety'){ S.tab='safety'; }
 render();
 </script>
 </body>
