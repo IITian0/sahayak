@@ -1,0 +1,46 @@
+{
+  "name": "Sahayak — care for the caregiver",
+  "short_name": "Sahayak",
+  "description": "A caregiving network for India's elderly: a daily voice guide, a circle of families, and a verified helper for the hours she needs to rest.",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF6F1",
+  "theme_color": "#2E1A3E",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today's care",
+      "url": "./app.html#home"
+    },
+    {
+      "name": "Book a helper",
+      "url": "./app.html#help"
+    },
+    {
+      "name": "Caregiver circle",
+      "url": "./app.html#circle"
+    }
+  ]
+}
