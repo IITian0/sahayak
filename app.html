@@ -133,233 +133,271 @@ nav button.on{color:var(--coral);font-weight:800}
 </script>
 </head>
 <body>
-<div class="cap">Sahayak · <b>working prototype</b></div>
+<div class="cap">Sahayak · <b>working app</b></div>
 <div class="phone">
   <div class="notch"></div>
   <div class="screen">
-    <div class="sbar"><span id="clock">9:41</span><span class="r"><i class="sig"></i><i class="wifi"></i><i class="bat" style="background:var(--ink)"></i></span></div>
+    <div class="sbar"><span id="clock">9:41</span><span class="r"><i class="sig"></i><i class="wifi"></i><i class="bat"></i></span></div>
     <div class="view" id="view"></div>
     <nav id="nav"></nav>
   </div>
 </div>
-<div class="hint">Onboarding → tick tasks → post in circle → book a helper → send family note</div>
+<div class="hint">Data saves on this device · refresh and it stays</div>
+<div id="toast" style="position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#2E1A3E;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:99;box-shadow:0 12px 30px rgba(0,0,0,.35)"></div>
+
+<style>
+.field{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;font-size:14px;font-family:inherit;color:var(--ink);margin-bottom:10px}
+.field:focus{outline:2px solid var(--lav2)}
+.addrow{display:flex;gap:8px;margin:4px 0 10px}
+.addrow input{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;font-size:13px;font-family:inherit;color:var(--ink)}
+.addrow button{border:none;background:var(--lav);color:var(--plum);border-radius:12px;padding:0 16px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
+.daychips{display:flex;gap:8px;margin:0 0 10px}
+.daychips button{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer;font-family:inherit}
+.daychips button.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.bk{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.bk:last-child{border-bottom:none}
+.bk b{font-size:12.5px}
+.bk small{color:var(--ink3);display:block;font-size:11px}
+.lbl{font-size:11px;font-weight:800;color:var(--ink2);margin:2px 0 6px}
+</style>
 
 <script>
-/* ---------- state ---------- */
-const S = {
-  onboarded:false, lang:'en', tab:'home',
-  tasks:[
-    {t:{en:"Morning medicine",hi:"Subah ki dawa"}, d:{en:"Donepezil 5 mg · 8:00 am",hi:"Donepezil 5 mg · 8:00 baje"}, done:true},
-    {t:{en:"Breakfast and water",hi:"Nashta aur paani"}, d:{en:"Soft food, 2 glasses · 9:00 am",hi:"Naram khana, 2 glass · 9:00 baje"}, done:true},
-    {t:{en:"Afternoon walk",hi:"Dopahar ki sair"}, d:{en:"With support, 15 min · 4:30 pm",hi:"Sahara ke saath, 15 min · 4:30 baje"}, done:false}
+var KEY = 'sahayak_v1';
+
+var DEFAULT = {
+  v: 1, name: '', elder: 'Savitri Devi', lang: 'en',
+  tasks: [
+    {id:'t1', t:{en:"Morning medicine",hi:"Subah ki dawa"}, d:{en:"Donepezil 5 mg · 8:00 am",hi:"Donepezil 5 mg · 8:00 baje"}, done:true},
+    {id:'t2', t:{en:"Breakfast and water",hi:"Nashta aur paani"}, d:{en:"Soft food, 2 glasses · 9:00 am",hi:"Naram khana, 2 glass · 9:00 baje"}, done:true},
+    {id:'t3', t:{en:"Afternoon walk",hi:"Dopahar ki sair"}, d:{en:"With support, 15 min · 4:30 pm",hi:"Sahara ke saath, 15 min · 4:30 baje"}, done:false}
   ],
-  posts:[
+  posts: [
     {n:"Sunita · Jaipur", m:{en:"Amma refused food today. Is that normal?",hi:"Amma ne aaj khana nahi khaya. Kya ye normal hai?"}, likes:4, ago:"12m"},
     {n:"Dr. Rao · clinical", m:{en:"It can happen. Offer small meals through the day, and log it in Care plan.",hi:"Ho sakta hai. Din bhar thoda-thoda khilayein, aur Care plan me likhein."}, likes:11, ago:"8m"},
     {n:"Meera · Ajmer", m:{en:"Same with my father. Warm milk before the meal helped us.",hi:"Mere papa ke saath bhi aisa tha. Khane se pehle garam doodh se fayda hua."}, likes:7, ago:"3m"}
   ],
-  booking:null, slot:null, sent:false, liked:{}
+  bookings: [], sentAt: null, liked: {}, slot: 2, day: 0
 };
 
-const L = {
+var S = null;
+function load() {
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) { var o = JSON.parse(raw); S = Object.assign({}, DEFAULT, o); return; }
+  } catch (e) {}
+  S = JSON.parse(JSON.stringify(DEFAULT));
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+var L = {
   en:{today:"Today",plan:"Care plan",circle:"Circle",help:"Respite",family:"Family",
-      hi:"Good morning, Asha",sub:"Amma's care · Jaipur",k1:"Today's care",k2:"Caregiver tip",
+      hi:"Good morning", sub:"care · Jaipur", k1:"Today's care", k2:"Caregiver tip",
       tip:"Keep the evening calm — dim the lights by 8 pm and play the same soft music. Familiar routines reduce agitation.",
-      book:"Book a helper for a few hours",note:"Family note sent",noteSub:"Rohan (Pune) · 9:12 am",
-      steps:"care steps",done:"done"},
+      book:"Book a helper for a few hours", note:"Family note sent", noteSub:"sent",
+      steps:"care steps", add:"Add a care step"},
   hi:{today:"Aaj",plan:"Care plan",circle:"Circle",help:"Madad",family:"Parivaar",
-      hi:"Suprabhat, Asha",sub:"Amma ki dekhbhal · Jaipur",k1:"Aaj ki dekhbhal",k2:"Caregiver tip",
-      tip:"Shaam shaant rakhein — 8 baje tak roshni kam karein aur wahi halka sangeet bajayein. Jaani-pehchani routine se ghabrahat kam hoti hai.",
-      book:"Kuch ghanton ke liye helper book karein",note:"Parivaar ko note bheja",noteSub:"Rohan (Pune) · 9:12 baje",
-      steps:"care steps",done:"ho gaya"}
+      hi:"Suprabhat", sub:"ki dekhbhal · Jaipur", k1:"Aaj ki dekhbhal", k2:"Caregiver tip",
+      tip:"Shaam shaant rakhein — 8 baje tak roshni kam karein aur wahi halka sangeet bajayein.",
+      book:"Kuch ghanton ke liye helper book karein", note:"Parivaar ko note bheja", noteSub:"bheja",
+      steps:"care steps", add:"Nayi care step jodein"}
 };
-const t = k => L[S.lang][k];
+function t(k){ return L[S.lang][k]; }
+var SLOTS = ["9–12","12–3","3–6","6–9"];
+var DAYS = ["Today","Tomorrow"];
+var HELPER_NAMES = ["Meena Sharma","Kavita Rao","Anita Verma"];
 
-/* ---------- helpers ---------- */
-const pct = () => Math.round(S.tasks.filter(x=>x.done).length / S.tasks.length * 100);
-const el = id => document.getElementById(id);
+function pct(){ var d=S.tasks.filter(function(x){return x.done}).length; return S.tasks.length? Math.round(d/S.tasks.length*100):0; }
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]}); }
 
-function statusBar(){ return `<div class="sbar"><span>9:41</span><span class="r"><i class="sig"></i><i class="wifi"></i><i class="bat"></i></span></div>`; }
+var toastTimer=null;
+function toast(msg){
+  var x=el('toast'); x.textContent=msg; x.style.opacity='1'; x.style.transform='translate(-50%,0)';
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ x.style.opacity='0'; x.style.transform='translate(-50%,20px)'; },1900);
+}
 
 function navHTML(){
-  const tabs=[["home","today","M3 10.5 12 3l9 7.5V21H3z"],["plan","plan","M4 6h16M4 12h16M4 18h10"],
-              ["circle","circle","M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"],
-              ["help","help","M12 21s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.4-7 10-7 10Z"],["family","family","M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8M22 20v-2a4 4 0 0 0-3-3.9"]];
-  return tabs.map(([k,l,d])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">
-    <svg viewBox="0 0 24 24"><path d="${d}"/></svg>${t(l)}</button>`).join("");
-}
-
-/* ---------- screens ---------- */
-function onboarding(){
-  el('nav').style.display='none';
-  el('view').innerHTML = `
-    <div class="hero-onb">
-      <div class="big"><span></span></div>
-      <h2>Care, held together</h2>
-      <p>Sahayak guides the person who looks after an elder at home — daily care, a circle of families, and a verified helper when they need rest.</p>
-      <button class="btn" onclick="start()">Get started</button>
-      <div class="dots"><i class="on"></i><i></i><i></i></div>
-    </div>`;
-}
-
-function home(){
-  return `${head()}
-  <div class="pad">
-    <div class="prog">
-      <div class="ring" style="--p:${pct()}%"><i>${pct()}%</i></div>
-      <div><div style="font-size:15px;font-weight:800">${t('hi')}</div>
-      <div style="font-size:11.5px;color:#D6C6E2;margin-top:3px">${S.tasks.filter(x=>x.done).length} ${S.lang==='en'?'of':'mein se'} ${S.tasks.length} ${t('steps')} ${t('done')}</div></div>
-    </div>
-    <div class="k">${t('k1')}</div>
-    ${S.tasks.map((x,i)=>`<div class="card"><div class="row">
-      <div class="chk ${x.done?'on':''}" onclick="toggle(${i})">${x.done?'✓':''}</div>
-      <div><div class="t ${x.done?'done':''}">${x.t[S.lang]}</div><div class="s">${x.d[S.lang]}</div></div>
-    </div></div>`).join("")}
-    <div class="card"><div class="k" style="margin-top:0">${t('k2')}</div>
-      <div style="font-size:12.5px;line-height:1.55;color:var(--ink2)">${t('tip')}</div></div>
-    <button class="btn" onclick="go('help')">${t('book')}</button>
-    <div class="card" style="margin-top:12px"><div class="row">
-      <div class="chk on">✓</div><div><div class="t done">${t('note')}</div><div class="s">${t('noteSub')}</div></div>
-    </div></div>
-  </div>`;
-}
-
-function plan(){
-  const meds=[["Donepezil","5 mg","8:00 am","After breakfast"],["Memantine","10 mg","2:00 pm","After lunch"],
-              ["Vitamin D","1 tab","9:00 am","Weekly, Monday"],["BP check","—","6:00 pm","Log the reading"]];
-  return `${head()}<div class="pad">
-    <div class="k">${S.lang==='en'?'Medicines today':'Aaj ki dawaiyan'}</div>
-    ${meds.map(m=>`<div class="card"><div class="row">
-      <div class="ic" style="width:34px;height:34px;border-radius:10px;background:var(--mint);display:grid;place-items:center;font-size:15px">💊</div>
-      <div><div class="t">${m[0]} <span style="font-weight:600;color:var(--ink2)">${m[1]}</span></div><div class="s">${m[3]}</div></div>
-      <div style="margin-left:auto;font-size:12px;font-weight:800;color:var(--coral)">${m[2]}</div>
-    </div></div>`).join("")}
-    <div class="card" style="background:var(--peach);border-color:#EFC9B9">
-      <div style="font-size:12px;font-weight:800;color:var(--coral2);margin-bottom:4px">Doctor's note · Dr. Rao</div>
-      <div style="font-size:12.5px;line-height:1.55;color:#7A3B25">Keep the afternoon quiet. If she refuses food twice in a day, message the circle.</div>
-    </div>
-    <button class="btn ghost" onclick="go('circle')">Ask the circle a question</button>
-  </div>`;
-}
-
-function circle(){
-  return `${head()}<div class="pad">
-    <div class="k">${S.lang==='en'?'Caregiver circle · Jaipur':'Caregiver circle · Jaipur'}</div>
-    ${S.posts.map((p,i)=>`<div class="msg"><div class="av">${p.n[0]}</div>
-      <div class="bub"><b>${p.n}</b>${p.m[S.lang]}
-        <div class="meta"><span onclick="like(${i})">♥ ${p.likes+(S.liked[i]?1:0)}</span><span>Reply</span><span>${p.ago}</span></div>
-      </div></div>`).join("")}
-    <div class="composer"><input id="q" placeholder="${S.lang==='en'?'Ask the circle…':'Circle se poochhein…'}" onkeydown="if(event.key==='Enter')send()">
-      <button onclick="send()">Send</button></div>
-  </div>`;
-}
-
-function help(){
-  const hs=[{n:"Meena Sharma",m:"Verified · 4 years · Hindi",r:"4.9"},{n:"Kavita Rao",m:"Dementia care trained",r:"4.8"},
-            {n:"Anita Verma",m:"Verified · 2 years · Marathi",r:"4.7"}];
-  return `${head()}<div class="pad">
-    <div class="k">${S.lang==='en'?'Verified helpers near you':'Aapke paas ke verified helpers'}</div>
-    ${hs.map((h,i)=>`<div class="card"><div class="helper">
-      <div class="av">${h.n[0]}</div><div><div class="n">${h.n}</div><div class="m">${h.m} · ★ ${h.r}</div></div>
-      <button class="book" ${S.booking!==null?'disabled':''} onclick="pick(${i})">${S.booking===i?'Booked':'Book'}</button>
-    </div></div>`).join("")}
-    <div class="k">${S.lang==='en'?'Pick a time':'Samay chunein'}</div>
-    <div class="row" style="gap:8px">${["9–12","12–3","3–6","6–9"].map((s,i)=>
-      `<button class="slot ${S.slot===i?'on':''}" onclick="slot(${i})">${s}</button>`).join("")}</div>
-    ${S.booking!==null?`<div class="ok">✓ ${hs[S.booking].n} booked for today, ${["9–12","12–3","3–6","6–9"][S.slot??2]}. You can rest — the family will be told.</div>`:''}
-    <button class="btn ghost" style="margin-top:12px" onclick="go('family')">See the family update</button>
-  </div>`;
-}
-
-function family(){
-  const d=S.tasks.filter(x=>x.done).length;
-  return `${head()}<div class="pad">
-    <div class="k">${S.lang==='en'?'Family update':'Parivaar ko update'}</div>
-    <div class="stat">
-      <div><b>${d}/${S.tasks.length}</b><small>${S.lang==='en'?'care steps':'care steps'}</small></div>
-      <div><b>${S.booking!==null?1:0}</b><small>${S.lang==='en'?'helper visit':'helper visit'}</small></div>
-      <div><b>3</b><small>${S.lang==='en'?'days steady':'din shaant'}</small></div>
-    </div>
-    <div class="card"><div style="font-size:13px;font-weight:800;margin-bottom:6px">${S.lang==='en'?'Today at home':'Aaj ghar par'}</div>
-      <div style="font-size:12.5px;line-height:1.6;color:var(--ink2)">Amma took her medicine on time and ate breakfast.
-      ${S.booking!==null?'A helper visited in the afternoon.':'She is resting now.'} Mood was calm. No falls.</div></div>
-    <button class="btn" onclick="sendUpdate()">${S.sent?(S.lang==='en'?'✓ Sent to Rohan':'✓ Rohan ko bhej diya'):(S.lang==='en'?'Send this note to Rohan':'Ye note Rohan ko bhejein')}</button>
-    ${S.sent?`<div class="ok">✓ Sent. Rohan (Pune) can see today's note in his app.</div>`:''}
-    <div class="k">${S.lang==='en'?'Family members':'Parivaar ke sadasya'}</div>
-    <div class="card">
-      <div class="listrow"><div class="ic">R</div><div><div class="t">Rohan</div><div class="s">Son · Pune</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div>
-      <div class="listrow"><div class="ic">P</div><div><div class="t">Priya</div><div class="s">Daughter · Delhi</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div>
-    </div>
-  </div>`;
-}
-
-function profile(){
-  return `<div class="hd"><button class="chip" onclick="go('home')">‹ Back</button></div>
-  <div class="pad">
-    <div class="card" style="text-align:center;padding:22px">
-      <div class="avatar" style="margin:0 auto 10px;width:64px;height:64px;font-size:22px">A</div>
-      <div style="font-size:17px;font-weight:800">Asha Sharma</div>
-      <div class="s">Primary caregiver · Jaipur</div>
-    </div>
-    <div class="k">Language</div>
-    <div class="switch"><button class="${S.lang==='en'?'on':''}" onclick="setLang('en')">English</button>
-      <button class="${S.lang==='hi'?'on':''}" onclick="setLang('hi')">हिंदी</button></div>
-    <div class="k">Elder profile</div>
-    <div class="card">
-      <div class="listrow"><div class="ic">S</div><div><div class="t">Savitri Devi, 78</div><div class="s">Dementia · stage 2</div></div></div>
-      <div class="listrow"><div class="ic">D</div><div><div class="t">Dr. Rao</div><div class="s">Clinical reviewer</div></div></div>
-      <div class="listrow"><div class="ic">₹</div><div><div class="t">Sahayak Plus</div><div class="s">₹299 / month · renews 4 Nov</div></div></div>
-    </div>
-    <button class="btn ghost" onclick="go('home')">Done</button><div style="margin-top:18px;text-align:center;font-size:10px;color:var(--ink3);line-height:1.6">Sahayak · built by Gaurav Kumar<br>Team Aasra · MNIT Jaipur · © 2026</div>
-  </div>`;
+  var tabs=[["home","today","M3 10.5 12 3l9 7.5V21H3z"],["plan","plan","M4 6h16M4 12h16M4 18h10"],
+            ["circle","circle","M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"],
+            ["help","help","M12 21s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.4-7 10-7 10Z"],
+            ["family","family","M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8M22 20v-2a4 4 0 0 0-3-3.9"]];
+  return tabs.map(function(x){ var k=x[0],l=x[1],d=x[2];
+    return '<button class="'+(S.tab===k?'on':'')+'" onclick="go(\''+k+'\')"><svg viewBox="0 0 24 24"><path d="'+d+'"/></svg>'+t(l)+'</button>';
+  }).join('');
 }
 
 function head(){
-  return `<div class="hd"><div class="mark"><span></span></div>
-    <div><h1>Sahayak</h1><p>${t('sub')}</p></div>
-    <div class="avatar" onclick="go('profile')">A</div></div>`;
+  return '<div class="hd"><div class="mark"><span></span></div><div><h1>Sahayak</h1><p>'+esc(S.elder)+' '+t('sub')+'</p></div><div class="avatar" onclick="go(\'profile\')">'+esc((S.name||'A').charAt(0).toUpperCase())+'</div></div>';
+}
+
+/* ---------- onboarding ---------- */
+function onboarding(){
+  el('nav').style.display='none';
+  el('view').innerHTML = '<div class="hero-onb">'
+    + '<div class="big"><span></span></div>'
+    + '<h2>Care, held together</h2>'
+    + '<p>Sahayak guides the person who looks after an elder at home. Set it up in ten seconds.</p>'
+    + '<div style="width:100%;max-width:300px;text-align:left">'
+    + '<div class="lbl">Your name</div><input class="field" id="f1" placeholder="Asha Sharma">'
+    + '<div class="lbl">Who are you caring for?</div><input class="field" id="f2" placeholder="Savitri Devi">'
+    + '<button class="btn" onclick="startApp()">Get started</button>'
+    + '</div></div>';
+}
+
+/* ---------- screens ---------- */
+function home(){
+  var done=S.tasks.filter(function(x){return x.done}).length;
+  return head()+'<div class="pad">'
+    + '<div class="prog"><div class="ring" style="--p:'+pct()+'%"><i>'+pct()+'%</i></div>'
+    + '<div><div style="font-size:15px;font-weight:800">'+t('hi')+', '+esc(S.name||'Asha')+'</div>'
+    + '<div style="font-size:11.5px;color:#D6C6E2;margin-top:3px">'+done+' / '+S.tasks.length+' '+t('steps')+' done</div></div></div>'
+    + '<div class="k">'+t('k1')+'</div>'
+    + S.tasks.map(function(x,i){ return '<div class="card"><div class="row">'
+        + '<div class="chk '+(x.done?'on':'')+'" onclick="toggle('+i+')">'+(x.done?'✓':'')+'</div>'
+        + '<div style="flex:1;min-width:0"><div class="t '+(x.done?'done':'')+'">'+esc(x.t[S.lang])+'</div><div class="s">'+esc(x.d[S.lang])+'</div></div>'
+        + '<div style="font-size:16px;color:#C0AECB;cursor:pointer;padding:0 4px" onclick="del('+i+')">×</div>'
+        + '</div></div>'; }).join('')
+    + '<div class="addrow"><input id="nt" placeholder="'+t('add')+'" onkeydown="if(event.key===\'Enter\')addTask()"><button onclick="addTask()">Add</button></div>'
+    + '<div class="card"><div class="k" style="margin-top:0">'+t('k2')+'</div>'
+    + '<div style="font-size:12.5px;line-height:1.55;color:var(--ink2)">'+t('tip')+'</div></div>'
+    + '<button class="btn" onclick="go(\'help\')">'+t('book')+'</button>'
+    + '<div class="card" style="margin-top:12px"><div class="row"><div class="chk on">✓</div>'
+    + '<div><div class="t done">'+t('note')+'</div><div class="s">'+t('noteSub')+' '+(S.sentAt||'9:12 am')+'</div></div></div></div>'
+    + '</div>';
+}
+
+function plan(){
+  var meds=[["Donepezil","5 mg","8:00 am","After breakfast"],["Memantine","10 mg","2:00 pm","After lunch"],
+            ["Vitamin D","1 tab","9:00 am","Weekly, Monday"],["BP check","—","6:00 pm","Log the reading"]];
+  return head()+'<div class="pad"><div class="k">'+(S.lang==='en'?'Medicines today':'Aaj ki dawaiyan')+'</div>'
+    + meds.map(function(m){ return '<div class="card"><div class="row">'
+      + '<div style="width:34px;height:34px;border-radius:10px;background:var(--mint);display:grid;place-items:center;font-size:15px">💊</div>'
+      + '<div><div class="t">'+m[0]+' <span style="font-weight:600;color:var(--ink2)">'+m[1]+'</span></div><div class="s">'+m[3]+'</div></div>'
+      + '<div style="margin-left:auto;font-size:12px;font-weight:800;color:var(--coral)">'+m[2]+'</div></div></div>'; }).join('')
+    + '<div class="card" style="background:var(--peach);border-color:#EFC9B9">'
+    + '<div style="font-size:12px;font-weight:800;color:var(--coral2);margin-bottom:4px">Doctor\'s note · Dr. Rao</div>'
+    + '<div style="font-size:12.5px;line-height:1.55;color:#7A3B25">Keep the afternoon quiet. If she refuses food twice in a day, message the circle.</div></div>'
+    + '<button class="btn ghost" onclick="go(\'circle\')">Ask the circle a question</button></div>';
+}
+
+function circle(){
+  return head()+'<div class="pad"><div class="k">Caregiver circle · Jaipur</div>'
+    + S.posts.map(function(p,i){ return '<div class="msg"><div class="av">'+esc(p.n.charAt(0))+'</div>'
+      + '<div class="bub"><b>'+esc(p.n)+'</b>'+esc(p.m[S.lang])
+      + '<div class="meta"><span onclick="like('+i+')">♥ '+(p.likes+(S.liked[i]?1:0))+'</span><span>Reply</span><span>'+p.ago+'</span></div>'
+      + '</div></div>'; }).join('')
+    + '<div class="composer"><input id="q" placeholder="'+(S.lang==='en'?'Ask the circle…':'Circle se poochhein…')+'" onkeydown="if(event.key===\'Enter\')send()"><button onclick="send()">Send</button></div>'
+    + '</div>';
+}
+
+function help(){
+  var hs=[{n:"Meena Sharma",m:"Verified · 4 years · Hindi",r:"4.9"},{n:"Kavita Rao",m:"Dementia care trained",r:"4.8"},
+          {n:"Anita Verma",m:"Verified · 2 years · Marathi",r:"4.7"}];
+  return head()+'<div class="pad"><div class="k">'+(S.lang==='en'?'Verified helpers near you':'Aapke paas ke verified helpers')+'</div>'
+    + hs.map(function(h,i){ return '<div class="card"><div class="helper"><div class="av">'+h.n.charAt(0)+'</div>'
+      + '<div><div class="n">'+h.n+'</div><div class="m">'+h.m+' · ★ '+h.r+'</div></div>'
+      + '<button class="book" onclick="pick('+i+')">Book</button></div></div>'; }).join('')
+    + '<div class="k">'+(S.lang==='en'?'When?':'Kab?')+'</div>'
+    + '<div class="daychips">'+DAYS.map(function(d,i){ return '<button class="'+(S.day===i?'on':'')+'" onclick="setDay('+i+')">'+d+'</button>'; }).join('')+'</div>'
+    + '<div class="row" style="gap:8px">'+SLOTS.map(function(s,i){ return '<button class="slot '+(S.slot===i?'on':'')+'" onclick="slot('+i+')">'+s+'</button>'; }).join('')+'</div>'
+    + (S.bookings.length? '<div class="k">'+(S.lang==='en'?'Your bookings':'Aapki bookings')+'</div><div class="card">'
+        + S.bookings.slice().reverse().map(function(b){ return '<div class="bk"><div style="flex:1"><b>'+b.helper+'</b><small>'+b.day+' · '+b.slot+'</small></div><div style="color:var(--green);font-weight:800;font-size:11px">Confirmed</div></div>'; }).join('')
+        + '</div>' : '')
+    + '<button class="btn ghost" style="margin-top:12px" onclick="go(\'family\')">See the family update</button></div>';
+}
+
+function family(){
+  var d=S.tasks.filter(function(x){return x.done}).length;
+  return head()+'<div class="pad"><div class="k">'+(S.lang==='en'?'Family update':'Parivaar ko update')+'</div>'
+    + '<div class="stat"><div><b>'+d+'/'+S.tasks.length+'</b><small>care steps</small></div>'
+    + '<div><b>'+S.bookings.length+'</b><small>helper visits</small></div><div><b>3</b><small>days steady</small></div></div>'
+    + '<div class="card"><div style="font-size:13px;font-weight:800;margin-bottom:6px">'+(S.lang==='en'?'Today at home':'Aaj ghar par')+'</div>'
+    + '<div style="font-size:12.5px;line-height:1.6;color:var(--ink2)">'+esc(S.elder)+' took her medicine on time and ate breakfast. '
+    + (S.bookings.length? S.bookings[S.bookings.length-1].helper+' visited in the afternoon.' : 'She is resting now.')+' Mood was calm. No falls.</div></div>'
+    + '<button class="btn" onclick="sendUpdate()">'+(S.sentAt?('✓ '+(S.lang==='en'?'Sent at ':'Bheja ')+S.sentAt):(S.lang==='en'?'Send this note to Rohan':'Ye note Rohan ko bhejein'))+'</button>'
+    + '<div class="k">'+(S.lang==='en'?'Family members':'Parivaar ke sadasya')+'</div>'
+    + '<div class="card"><div class="listrow"><div class="ic">R</div><div><div class="t">Rohan</div><div class="s">Son · Pune</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div>'
+    + '<div class="listrow"><div class="ic">P</div><div><div class="t">Priya</div><div class="s">Daughter · Delhi</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div></div>'
+    + '</div>';
+}
+
+function profile(){
+  return '<div class="hd"><button class="chip" onclick="go(\'home\')">‹ Back</button></div><div class="pad">'
+    + '<div class="card" style="text-align:center;padding:22px"><div class="avatar" style="margin:0 auto 10px;width:64px;height:64px;font-size:22px">'+esc((S.name||'A').charAt(0).toUpperCase())+'</div>'
+    + '<div style="font-size:17px;font-weight:800">'+esc(S.name||'Asha')+'</div><div class="s">Primary caregiver · Jaipur</div></div>'
+    + '<div class="k">Edit</div>'
+    + '<div class="lbl">Your name</div><input class="field" id="pn" value="'+esc(S.name)+'">'
+    + '<div class="lbl">Elder\'s name</div><input class="field" id="pe" value="'+esc(S.elder)+'">'
+    + '<button class="btn ghost" onclick="saveProfile()">Save</button>'
+    + '<div class="k">Language</div>'
+    + '<div class="switch"><button class="'+(S.lang==='en'?'on':'')+'" onclick="setLang(\'en\')">English</button>'
+    + '<button class="'+(S.lang==='hi'?'on':'')+'" onclick="setLang(\'hi\')">हिंदी</button></div>'
+    + '<div class="k">Plan</div><div class="card"><div class="listrow"><div class="ic">₹</div><div><div class="t">Sahayak Plus</div><div class="s">₹299 / month · renews 4 Nov</div></div></div></div>'
+    + '<button class="btn ghost" onclick="resetAll()">Reset demo data</button>'
+    + '<div style="margin-top:18px;text-align:center;font-size:10px;color:var(--ink3);line-height:1.6">Sahayak · built by Gaurav Kumar<br>Team Aasra · MNIT Jaipur · © 2026</div>'
+    + '</div>';
 }
 
 /* ---------- actions ---------- */
 function render(){
-  const v=el('view');
-  if(!S.onboarded){ onboarding(); return; }
+  var v=el('view');
+  if(!S.name){ onboarding(); return; }
   el('nav').style.display='flex';
-  const map={home,plan,circle,help,family,profile};
+  var map={home:home,plan:plan,circle:circle,help:help,family:family,profile:profile};
   v.innerHTML=(map[S.tab]||home)();
   el('nav').innerHTML=navHTML();
-  v.scrollTop=0;
 }
-function start(){ S.onboarded=true; S.tab='home'; render(); }
-function go(k){ S.tab=k; render(); }
-function toggle(i){ S.tasks[i].done=!S.tasks[i].done; render(); }
-function setLang(l){ S.lang=l; render(); }
-function like(i){ S.liked[i]=true; render(); }
+function startApp(){
+  var a=(el('f1').value||'').trim(), b=(el('f2').value||'').trim();
+  if(!a){ toast('Please enter your name'); return; }
+  S.name=a; if(b) S.elder=b; S.tab='home'; save(); render(); toast('Welcome, '+a);
+}
+function go(k){ S.tab=k; save(); render(); }
+function toggle(i){ S.tasks[i].done=!S.tasks[i].done; save(); render(); if(S.tasks[i].done) toast('Marked done'); }
+function del(i){ S.tasks.splice(i,1); save(); render(); toast('Removed'); }
+function addTask(){
+  var i=el('nt'), v=(i.value||'').trim(); if(!v) return;
+  S.tasks.push({id:'t'+Date.now(), t:{en:v,hi:v}, d:{en:'Added by you',hi:'Aapne joda'}, done:false});
+  save(); render(); toast('Care step added');
+}
+function setLang(l){ S.lang=l; save(); render(); }
+function setDay(i){ S.day=i; save(); render(); }
+function slot(i){ S.slot=i; save(); render(); }
+function pick(i){
+  S.bookings.push({helper:HELPER_NAMES[i], day:DAYS[S.day], slot:SLOTS[S.slot], at:Date.now()});
+  save(); render(); toast(HELPER_NAMES[i]+' booked · '+DAYS[S.day]+' '+SLOTS[S.slot]);
+}
+function like(i){ S.liked[i]=true; save(); render(); }
 function send(){
-  const inp=el('q'); const txt=(inp.value||'').trim(); if(!txt) return;
-  S.posts.push({n:"You · Asha", m:{en:txt,hi:txt}, likes:0, ago:"now"});
-  render();
-  setTimeout(()=>{ S.posts.push({n:"Sunita · Jaipur", m:{en:"Same here — a warm drink before the meal helped us.",hi:"Yahan bhi — khane se pehle garam doodh se fayda hua."}, likes:2, ago:"now"});
-    if(S.tab==='circle') render(); }, 800);
+  var inp=el('q'), txt=(inp.value||'').trim(); if(!txt) return;
+  S.posts.push({n:"You · "+(S.name||'Asha'), m:{en:txt,hi:txt}, likes:0, ago:"now"});
+  save(); render(); toast('Posted to the circle');
+  setTimeout(function(){
+    S.posts.push({n:"Sunita · Jaipur", m:{en:"Same here — a warm drink before the meal helped us.",hi:"Yahan bhi — khane se pehle garam doodh se fayda hua."}, likes:2, ago:"now"});
+    save(); if(S.tab==='circle') render();
+  }, 900);
 }
-function pick(i){ S.booking=i; if(S.slot===null) S.slot=2; render(); }
-function slot(i){ S.slot=i; render(); }
-function sendUpdate(){ S.sent=true; render(); }
+function sendUpdate(){
+  var d=new Date();
+  S.sentAt = d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+  save(); render(); toast('Note sent to Rohan');
+}
+function saveProfile(){
+  var a=(el('pn').value||'').trim(), b=(el('pe').value||'').trim();
+  if(a) S.name=a; if(b) S.elder=b; save(); render(); toast('Saved');
+}
+function resetAll(){
+  S=JSON.parse(JSON.stringify(DEFAULT)); save(); S.tab='home'; render(); toast('Demo data reset');
+}
 
-/* clock */
-setInterval(()=>{ const d=new Date(); el('clock').textContent = d.getHours().toString().padStart(2,'0')+":"+d.getMinutes().toString().padStart(2,'0'); },1000);
-if(location.hash==='#home'){S.onboarded=true;S.tab='home';}
-if(location.hash==='#plan'){S.onboarded=true;S.tab='plan';}
-if(location.hash==='#circle'){S.onboarded=true;S.tab='circle';}
-if(location.hash==='#help'){S.onboarded=true;S.tab='help';}
+setInterval(function(){ var d=new Date(); el('clock').textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); },1000);
+
+load();
+S.tab = S.tab || 'home';
+if(location.hash==='#home'){ S.tab='home'; }
+if(location.hash==='#help'){ S.tab='help'; }
+if(location.hash==='#circle'){ S.tab='circle'; }
 render();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function () {});
-  });
-}
 </script>
 </body>
 </html>
