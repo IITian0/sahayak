@@ -62,6 +62,8 @@ Mentorship and one hospital pilot, to reach 100 families across two cities by Ma
 
 ---
 
-© 2026 **Gaurav Kumar** · Team Aasra, MNIT Jaipur. All rights reserved. See [LICENSE](LICENSE).
+© 2026 **Gaurav Kumar** · Team Aasra, MNIT Jaipur. All rights reserved.
+
+Contact: **gauravfriends01@gmail.com** See [LICENSE](LICENSE).
 
 The name, logo, design and code in this repository may not be copied, reused or resubmitted without written permission.
