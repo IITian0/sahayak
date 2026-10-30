@@ -137,6 +137,12 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
   .nav nav{display:none}
 }
 </style>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2E1A3E">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Sahayak">
 </head>
 <body>
 
@@ -254,5 +260,12 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
   <div class="bot"><span>© 2026 Sahayak · Team Aasra</span><span>Sources: Government of India 2024 · The Lancet 2024 · Business Standard 2024</span></div>
 </div></footer>
 
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>
