@@ -257,7 +257,11 @@ function home(){
         + '<div style="flex:1;min-width:0"><div class="t '+(x.done?'done':'')+'">'+esc(x.t[S.lang])+'</div><div class="s">'+esc(x.d[S.lang])+'</div></div>'
         + '<div style="font-size:16px;color:#C0AECB;cursor:pointer;padding:0 4px" onclick="del('+i+')">×</div>'
         + '</div></div>'; }).join('')
-    + '<div class="addrow"><input id="nt" placeholder="'+t('add')+'" onkeydown="if(event.key===\'Enter\')addTask()"><button onclick="addTask()">Add</button></div>'
+    + '<div class="addrow"><input id="nt" placeholder="'+t('add')+'" onkeydown="if(event.key===\'Enter\')addTask()"><button onclick="mic()" title="Speak with your voice" style="display:grid;place-items:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E1A3E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10a7 7 0 0 1-14 0"/><path d="M12 17v4"/></svg></button><button onclick="addTask()">Add</button></div>'
+    + '<div class="row" style="gap:8px;margin:2px 0 10px">'
+    + '<button class="btn ghost" style="flex:1;padding:11px;font-size:12.5px" onclick="speak()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:7px;vertical-align:-2px"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>Listen</button>'
+    + '<button class="btn ghost" style="flex:1;padding:11px;font-size:12.5px" onclick="remind()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:7px;vertical-align:-2px"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Remind</button>'
+    + '</div>'
     + '<div class="card"><div class="k" style="margin-top:0">'+t('k2')+'</div>'
     + '<div style="font-size:12.5px;line-height:1.55;color:var(--ink2)">'+t('tip')+'</div></div>'
     + '<button class="btn" onclick="go(\'help\')">'+t('book')+'</button>'
@@ -314,7 +318,9 @@ function family(){
     + '<div class="card"><div style="font-size:13px;font-weight:800;margin-bottom:6px">'+(S.lang==='en'?'Today at home':'Aaj ghar par')+'</div>'
     + '<div style="font-size:12.5px;line-height:1.6;color:var(--ink2)">'+esc(S.elder)+' took her medicine on time and ate breakfast. '
     + (S.bookings.length? S.bookings[S.bookings.length-1].helper+' visited in the afternoon.' : 'She is resting now.')+' Mood was calm. No falls.</div></div>'
+    + '<div class="k">This week</div>' + chartSVG()
     + '<button class="btn" onclick="sendUpdate()">'+(S.sentAt?('✓ '+(S.lang==='en'?'Sent at ':'Bheja ')+S.sentAt):(S.lang==='en'?'Send this note to Rohan':'Ye note Rohan ko bhejein'))+'</button>'
+    + '<button class="btn ghost" style="margin-top:10px" onclick="shareNote()">Share this note</button>'
     + '<div class="k">'+(S.lang==='en'?'Family members':'Parivaar ke sadasya')+'</div>'
     + '<div class="card"><div class="listrow"><div class="ic">R</div><div><div class="t">Rohan</div><div class="s">Son · Pune</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div>'
     + '<div class="listrow"><div class="ic">P</div><div><div class="t">Priya</div><div class="s">Daughter · Delhi</div></div><div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:800">Active</div></div></div>'
@@ -390,6 +396,61 @@ function resetAll(){
   S=JSON.parse(JSON.stringify(DEFAULT)); save(); S.tab='home'; render(); toast('Demo data reset');
 }
 
+function addTaskText(v){
+  v = (v||'').trim(); if(!v) return;
+  S.tasks.push({id:'t'+Date.now(), t:{en:v,hi:v}, d:{en:'Added by voice',hi:'Awaaz se joda'}, done:false});
+  save(); render(); toast('Added: ' + v);
+}
+function mic(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('Voice input is not supported on this browser'); return; }
+  var r = new SR();
+  r.lang = (S.lang === 'hi') ? 'hi-IN' : 'en-IN';
+  r.interimResults = false; r.maxAlternatives = 1;
+  toast('Listening…');
+  r.onresult = function(e){ addTaskText(e.results[0][0].transcript); };
+  r.onerror = function(){ toast('Could not hear that — try again'); };
+  try { r.start(); } catch (err) { toast('Microphone busy'); }
+}
+function speak(){
+  if(!('speechSynthesis' in window)){ toast('Voice is not supported here'); return; }
+  var parts = S.tasks.map(function(x,i){ return (i+1) + '. ' + x.t[S.lang] + ', ' + x.d[S.lang]; });
+  var u = new SpeechSynthesisUtterance((S.lang==='hi'?'Aaj ki dekhbhal. ':'Today\'s care. ') + parts.join('. '));
+  u.lang = (S.lang === 'hi') ? 'hi-IN' : 'en-IN'; u.rate = 0.95;
+  try { speechSynthesis.cancel(); speechSynthesis.speak(u); toast('Reading today\'s care'); }
+  catch(e){ toast('Voice not available'); }
+}
+function remind(){
+  if(!('Notification' in window)){ toast('Notifications are not supported here'); return; }
+  Notification.requestPermission().then(function(p){
+    if(p === 'granted'){
+      toast('Reminder set — in 5 seconds');
+      setTimeout(function(){
+        try { new Notification('Sahayak', {body: S.lang==='hi' ? 'Subah ki dawa ka samay ho gaya' : 'Time for the morning medicine', icon:'icon-192.png'}); } catch(e){}
+      }, 5000);
+    } else { toast('Notifications are blocked'); }
+  });
+}
+function shareNote(){
+  var txt = 'Sahayak · ' + S.elder + ' — today: ' + S.tasks.filter(function(x){return x.done}).length + '/' + S.tasks.length + ' care steps done.';
+  if(navigator.share){ navigator.share({title:'Sahayak update', text:txt}).catch(function(){}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(function(){ toast('Note copied'); }).catch(function(){ toast('Could not copy'); }); }
+  else { toast('Sharing not supported'); }
+}
+function chartSVG(){
+  var vals = [60,75,50,90,80,67,100];
+  var w = 34, gap = 10, h = 90;
+  var bars = vals.map(function(v,i){
+    var bh = Math.round(v/100*h);
+    var x = i*(w+gap);
+    var col = (i===vals.length-1) ? '#E2603C' : '#B39AC7';
+    return '<rect x="'+x+'" y="'+(h-bh)+'" width="'+w+'" height="'+bh+'" rx="5" fill="'+col+'"></rect>'
+         + '<text x="'+(x+w/2)+'" y="'+(h+16)+'" font-size="9" fill="#9A8CA4" text-anchor="middle">'+['M','T','W','T','F','S','S'][i]+'</text>';
+  }).join('');
+  return '<div class="card" style="padding:14px 12px"><svg width="100%" viewBox="0 0 '+(7*(w+gap)-gap)+' 118" preserveAspectRatio="xMidYMid meet">'+bars+'</svg>'
+       + '<div style="font-size:11px;color:var(--ink2);margin-top:6px">Care steps completed · last 7 days</div></div>';
+}
+
 setInterval(function(){ var d=new Date(); el('clock').textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); },1000);
 
 load();
@@ -397,6 +458,9 @@ S.tab = S.tab || 'home';
 if(location.hash==='#home'){ S.tab='home'; }
 if(location.hash==='#help'){ S.tab='help'; }
 if(location.hash==='#circle'){ S.tab='circle'; }
+if(location.hash==='#family'){ S.tab='family'; }
+if(location.hash==='#plan'){ S.tab='plan'; }
+if(location.hash==='#profile'){ S.tab='profile'; }
 render();
 </script>
 </body>
