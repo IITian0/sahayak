@@ -143,6 +143,27 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Sahayak">
+<meta name="author" content="Gaurav Kumar">
+<meta name="copyright" content="© 2026 Gaurav Kumar · Team Aasra. All rights reserved.">
+<style>
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;user-select:text}
+  @media print{body{display:none}}
+</style>
+<script>
+(function () {
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    var devtools = (e.key === 'F12') ||
+      (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) ||
+      (e.metaKey && e.altKey && (k === 'i' || k === 'j' || k === 'c')) ||
+      (e.ctrlKey && (k === 'u' || k === 's'));
+    if (devtools) { e.preventDefault(); return false; }
+  });
+  document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+})();
+</script>
 </head>
 <body>
 
@@ -267,13 +288,13 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
   <div class="cols">
     <div>
       <div class="brand" style="color:#fff;margin-bottom:14px"><div class="mark"><span></span></div>Sahayak</div>
-      <p style="max-width:300px">A caregiving network for India's elderly — built by Team Aasra, MNIT Jaipur, for SPHINX'26.</p>
+      <p style="max-width:300px">A caregiving network for India's elderly — built by <strong style="color:#fff">Gaurav Kumar</strong>, Team Aasra, MNIT Jaipur, for SPHINX'26.</p>
     </div>
     <div><h5>Product</h5><a href="app.html">The app</a><a href="#how">How it works</a><a href="#pricing">Pricing</a></div>
     <div><h5>For business</h5><a href="#hospitals">Hospitals</a><a href="#hospitals">Employers</a></div>
-    <div><h5>Contact</h5><a href="mailto:team@sahayak.app">team@sahayak.app</a><a href="#">Jaipur, Rajasthan</a></div>
+    <div><h5>Contact</h5><a href="mailto:team@sahayak.app">team@sahayak.app</a><a href="#">Jaipur, Rajasthan</a><a style="color:#fff;font-weight:700">Gaurav Kumar · Team Lead</a></div>
   </div>
-  <div class="bot"><span>© 2026 Sahayak · Team Aasra</span><span>Sources: Government of India 2024 · The Lancet 2024 · Business Standard 2024</span></div>
+  <div class="bot"><span>© 2026 Gaurav Kumar · Team Aasra · All rights reserved</span><span>Sources: Government of India 2024 · The Lancet 2024 · Business Standard 2024</span></div>
 </div></footer>
 
 <script>
