@@ -1,30 +1,61 @@
 # Sahayak
 
-A caregiving network for India's elderly — built by **Team Aasra**, MNIT Jaipur, for **SPHINX'26**.
+**A caregiving network for India's elderly.** Built by **Team Aasra**, MNIT Jaipur, for **SPHINX'26 · Minute To Pitch It**.
 
-The caregiver, not the patient, is the centre of the product: a daily voice guide in her own language, a circle of other families, and a verified helper for the hours she needs to rest.
+Most products centre the person being cared for. Sahayak centres the person *doing* the caring — because that is where the load actually falls.
 
 ## Live
 
-- Website: `/index.html`
-- App prototype: `/app.html`
+| | |
+|---|---|
+| Website | https://iitian0.github.io/sahayak/ |
+| App (PWA) | https://iitian0.github.io/sahayak/app.html |
 
-## What works in the prototype
+Both install as a Progressive Web App: on Android/desktop Chrome tap **Install**, on iPhone use **Share → Add to Home Screen**. It runs full screen and works offline after the first load.
 
-- Onboarding, then a five-tab app: Today, Care plan, Circle, Respite, Family
+## What the prototype does
+
+- Onboarding, then a five-tab app: **Today · Care plan · Circle · Respite · Family**
 - Tick care steps — the progress ring updates
 - Post in the caregiver circle — a reply comes back
 - Pick a time slot and book a verified helper
 - Send the day's note to a family member
-- English / हिंदी toggle that actually switches the interface
+- **English / हिंदी** toggle that actually switches the interface
+- Profile with the elder's record and the current plan
 
-Everything runs in the browser with no backend; state is in memory. This is a front-end prototype for the pitch.
+Everything runs in the browser with no backend; state is held in memory. This is a front-end prototype for the pitch.
 
-## Stats used
+## Files
 
-10.4 crore Indians over 60 · 88 lakh with dementia · 1 in 10 get any care · ₹199 a month.
-Sources: Government of India, 2024 · The Lancet, 2024 · Business Standard, 2024.
+```
+index.html              marketing site + install section
+app.html                the working app prototype
+manifest.webmanifest    PWA manifest
+sw.js                   service worker (offline app shell)
+icon-192.png            app icon
+icon-512.png            app icon
+```
 
 ## Run locally
 
-Open `index.html` in any browser. No build step, no dependencies.
+Open `index.html` in any browser. No build step, no dependencies. The service worker needs `http://` or `https://` — for a local test, run `python3 -m http.server` in this folder.
+
+## The numbers
+
+| | |
+|---|---|
+| Indians aged 60 and above | 10.4 crore |
+| Living with dementia | 88 lakh |
+| Getting any diagnosis or care | 1 in 10 |
+| Sahayak, per month | ₹199 |
+| Urban home care today | ₹15,000–75,000 / month |
+
+Sources: Government of India, 2024 · The Lancet, 2024 · Business Standard, 2024.
+
+## The ask
+
+Mentorship and one hospital pilot, to reach 100 families across two cities by March 2027.
+
+---
+
+*Sahayak — har caregiver ke paas ek aasra.*
