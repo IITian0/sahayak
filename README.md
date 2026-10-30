@@ -1,6 +1,6 @@
 # Sahayak
 
-**A caregiving network for India's elderly.** Built by **Team Aasra**, MNIT Jaipur, for **SPHINX'26 · Minute To Pitch It**.
+**A caregiving network for India's elderly.** Built by **Gaurav Kumar**, Team Aasra, MNIT Jaipur, for **SPHINX'26 · Minute To Pitch It**.
 
 Most products centre the person being cared for. Sahayak centres the person *doing* the caring — because that is where the load actually falls.
 
@@ -59,3 +59,9 @@ Mentorship and one hospital pilot, to reach 100 families across two cities by Ma
 ---
 
 *Sahayak — har caregiver ke paas ek aasra.*
+
+---
+
+© 2026 **Gaurav Kumar** · Team Aasra, MNIT Jaipur. All rights reserved. See [LICENSE](LICENSE).
+
+The name, logo, design and code in this repository may not be copied, reused or resubmitted without written permission.
