@@ -150,6 +150,7 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
   <div class="brand"><div class="mark"><span></span></div>Sahayak</div>
   <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#hospitals">For hospitals</a></nav>
   <a class="cta" href="app.html">Open the app</a>
+  <button class="cta install-btn" style="border:none;cursor:pointer;font-family:inherit">Install</button>
 </div></div>
 
 <header class="hero"><div class="wrap">
@@ -157,7 +158,7 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
     <div class="tag"><i></i>Team Aasra · MNIT Jaipur</div>
     <h1>Care for the person<br>who gives the care.</h1>
     <p>Sahayak is a caregiving network for India's elderly. A daily voice guide in the caregiver's own language, a circle of families who understand, and a verified helper for the hours she needs to rest.</p>
-    <div class="btns"><a class="b1" href="app.html">Try the working app</a><a class="b2" href="#how">See how it works</a></div>
+    <div class="btns"><a class="b1" href="app.html">Try the working app</a><a class="b2" href="#how">See how it works</a><button class="b2 install-btn" style="border-color:rgba(255,255,255,.5);cursor:pointer;font-family:inherit">Install app</button></div>
     <div class="trust">
       <div><b>10.4 crore</b>Indians over 60</div>
       <div><b>1 in 10</b>get any care</div>
@@ -241,6 +242,21 @@ footer .bot{border-top:1px solid rgba(255,255,255,.12);margin-top:36px;padding-t
   </div>
 </div></section>
 
+<section id="install" style="background:#fff;border-top:1px solid var(--line)"><div class="wrap center">
+  <div class="eyebrow">Install</div>
+  <h2>Take Sahayak with you</h2>
+  <p class="lead">Sahayak installs like a real app — full screen, its own icon on the home screen, and it keeps working offline.</p>
+  <div style="max-width:720px;margin:38px auto 0;text-align:left">
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start;margin-bottom:14px"><div class="num" style="margin:0">1</div><div><h3 style="margin-bottom:4px">Tap Install</h3><p>On Android or desktop Chrome, tap the button below. On iPhone, use Share → Add to Home Screen.</p></div></div>
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start;margin-bottom:14px"><div class="num" style="margin:0">2</div><div><h3 style="margin-bottom:4px">It opens full screen</h3><p>No browser bar, no address bar. It looks and feels like a native app.</p></div></div>
+    <div class="card" style="display:flex;gap:16px;align-items:flex-start"><div class="num" style="margin:0">3</div><div><h3 style="margin-bottom:4px">Works without internet</h3><p>The care plan, the circle and the family note stay available once it has loaded once.</p></div></div>
+  </div>
+  <div class="btns" style="justify-content:center;margin-top:30px">
+    <button class="b1 install-btn" style="border:none;cursor:pointer;font-family:inherit">Install the app</button>
+    <a class="b2" style="color:var(--plum);border-color:var(--line)" href="app.html">Open in the browser</a>
+  </div>
+</div></section>
+
 <div class="cta"><div class="wrap">
   <h2>Put a helper beside every caregiver</h2>
   <p>Try the working prototype — no sign-up, it runs in your browser.</p>
@@ -266,6 +282,32 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function () {});
   });
 }
+</script>
+<script>
+(function () {
+  var deferred = null;
+  var btns = document.querySelectorAll('.install-btn');
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    btns.forEach(function (b) { b.style.display = 'inline-block'; });
+  });
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (!deferred) { window.location.href = 'app.html'; return; }
+      deferred.prompt();
+      deferred.userChoice.then(function (res) {
+        if (res && res.outcome === 'accepted') {
+          btns.forEach(function (x) { x.textContent = 'Installed'; x.style.display = 'none'; });
+        }
+        deferred = null;
+      });
+    });
+  });
+  window.addEventListener('appinstalled', function () {
+    btns.forEach(function (b) { b.style.display = 'none'; });
+  });
+})();
 </script>
 </body>
 </html>
