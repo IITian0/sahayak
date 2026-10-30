@@ -110,6 +110,27 @@ nav button.on{color:var(--coral);font-weight:800}
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Sahayak">
+<meta name="author" content="Gaurav Kumar">
+<meta name="copyright" content="© 2026 Gaurav Kumar · Team Aasra. All rights reserved.">
+<style>
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;user-select:text}
+  @media print{body{display:none}}
+</style>
+<script>
+(function () {
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    var devtools = (e.key === 'F12') ||
+      (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) ||
+      (e.metaKey && e.altKey && (k === 'i' || k === 'j' || k === 'c')) ||
+      (e.ctrlKey && (k === 'u' || k === 's'));
+    if (devtools) { e.preventDefault(); return false; }
+  });
+  document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+})();
+</script>
 </head>
 <body>
 <div class="cap">Sahayak · <b>working prototype</b></div>
@@ -289,7 +310,7 @@ function profile(){
       <div class="listrow"><div class="ic">D</div><div><div class="t">Dr. Rao</div><div class="s">Clinical reviewer</div></div></div>
       <div class="listrow"><div class="ic">₹</div><div><div class="t">Sahayak Plus</div><div class="s">₹299 / month · renews 4 Nov</div></div></div>
     </div>
-    <button class="btn ghost" onclick="go('home')">Done</button>
+    <button class="btn ghost" onclick="go('home')">Done</button><div style="margin-top:18px;text-align:center;font-size:10px;color:var(--ink3);line-height:1.6">Sahayak · built by Gaurav Kumar<br>Team Aasra · MNIT Jaipur · © 2026</div>
   </div>`;
 }
 
